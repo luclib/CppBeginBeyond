@@ -2889,7 +2889,7 @@ Move constructor definition
 ```cpp
   Move::Move(Move &&source)
     :data{source.data} {
-      source.data = nullptr;s
+      source.data = nullptr;
     }
 ```
 Here we are 'stealing' the data and then nulling out the source pointer.
