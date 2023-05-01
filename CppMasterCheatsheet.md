@@ -3228,3 +3228,4 @@ main.o: main.c
 
 * **`$@`** is the file name of the target of the rule.
 * **`$<`** is the name of the first prerequisite (dependency).
+* **`$^`** lists the names of all the prerequisites. 
