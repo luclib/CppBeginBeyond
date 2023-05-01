@@ -1,6 +1,7 @@
 # C++ Master Cheatsheet
 
 ## Table of Contents
+
 1. [Program Structure](#program-structure)
 2. [Namespace](#namespace)
 3. [Basic Input/Output](#basic-input-and-output)
@@ -33,21 +34,22 @@
    d. [Passing Arrays into Functions](#passing-arrays-into-functions)
    e. [Pass by Reference](#pass-by-reference)
 10. [Pointers and References](#pointers-and-references)
-   a. [Pointers](#pointers)
-   b. [Dynamic Memory Allocation](#dynamic-memory-allocation)
-   c. [Relationship Between Arrays and Pointers](#relationship-between-arrays-and-pointers)
-   d. [Pointer Arithmetic](#pointer-arithmetic)
-   e. [References](#references)
+    a. [Pointers](#pointers)
+    b. [Dynamic Memory Allocation](#dynamic-memory-allocation)
+    c. [Relationship Between Arrays and Pointers](#relationship-between-arrays-and-pointers)
+    d. [Pointer Arithmetic](#pointer-arithmetic)
+    e. [References](#references)
 11. [OOP - Classes and Objects](#oop---classes-and-objects)
-   a. [Classes vs Objects](#classes-vs-objects)
-   b. [Access Modifiers](#access-modifiers)
-   b. [Constructors and Destructors](#constructors-and-destructors)
+    a. [Classes vs Objects](#classes-vs-objects)
+    b. [Access Modifiers](#access-modifiers)
+    b. [Constructors and Destructors](#constructors-and-destructors)
 
 ## Appendices
+
 1. [C++ Setup and Configuration](#c++-setup-and-configuration)
 2. [Makefiles](#makefiles)
-    a. [Object files](#object-o-files)
-    b. [Makefile variables](#makefile-variables)
+   a. [Object files](#object-o-files)
+   b. [Makefile variables](#makefile-variables)
 
 ## Program structure
 
@@ -879,7 +881,7 @@ return 0;
 
 **NOTE**: if you comparing variables with large values that are approximated (rounded) by the compiler on run time, you may get a false positive result.
 
- ```cpp
+```cpp
  bool equal_result {false};
  bool not_equal_result {false};
  double double1{}, double2{};
@@ -890,8 +892,7 @@ return 0;
  cout << "Comparison result (equals): " << equal_result << endl;
  cout << "Comparison result (not equals): " << not_equal_result << endl;
  return 0;
- ```
-
+```
 
 ```txt
 Enter two double separted by a space: 12.0 11.9999999999999999999999999999999
@@ -910,11 +911,11 @@ Comparison result (not equals): 0
 
 #### Logical Operators
 
-| Operator                                         | Meaning        
-| :----------------------------------------------- | :------------- 
-| <ul><li>`!`</li><li>`not`</li></ul> | negation       
-| <ul><li>`&&`</li><li>`and`</li></ul> | logical *and* 
-| <ul><li>`||`</li><li>`or`</li></ul> | logical *or* 
+| Operator                                   | Meaning        |
+| :----------------------------------------- | :------------- |
+| `<ul><li>``!</li>``<li>not``</li></ul>`  | negation       |
+| `<ul><li>``&&</li>``<li>and``</li></ul>` | logical*and* |
+| ````<ul><li>`````                        |                |
 
 > **NOTE**: Extremely rare for people to use the logical word operands (`and`, `or`, or `not`).
 
@@ -1579,25 +1580,30 @@ C++ programs involve pre-defined functions from 3 sources:
 * Your own functions and classes
 
 ### Math Functions
+
 The `<cmath>` library contains most (if not all) of the classic math functions for C++.
 
-|Function |Description
-|:---- |:----
-| `sqrt(x)` | Calculates the square root of `x`
-| `cbrt(x)` | Calculates the cube root of `x`
-| `sin(x)` | Calculates the sine of `x`
-| `cos(x)` | Calculates the cosine of `x`
-| `ceil(x)` | Round *up* the value of `x` (to the ceiling)
-| `floor(x)` | Rounds *down* the value of `x`(to the floor)
-| `round(x)` | Rounds the value of `x`
-| `pow(x, y)` | Calculates `x` to the power of `y`.
+| Function      | Description                                     |
+| :------------ | :---------------------------------------------- |
+| `sqrt(x)`   | Calculates the square root of `x`             |
+| `cbrt(x)`   | Calculates the cube root of `x`               |
+| `sin(x)`    | Calculates the sine of `x`                    |
+| `cos(x)`    | Calculates the cosine of `x`                  |
+| `ceil(x)`   | Round*up* the value of `x` (to the ceiling) |
+| `floor(x)`  | Rounds*down* the value of `x`(to the floor) |
+| `round(x)`  | Rounds the value of `x`                       |
+| `pow(x, y)` | Calculates `x` to the power of `y`.         |
 
 #### Random number generator
+
 C++ uses the `rand()` function from the `<cstdlib>` namespace to generate random numbers.
+
 ```cpp
 #include <cstdlib>
 ```
+
 In order to use the random number generator, you must first seed it in order to obtain a distinct sequence of random numbers for each run.
+
 ```cpp
 int random_number{};
 size_t count {10};    // number of random numbers to generate
@@ -1656,16 +1662,20 @@ double calc_cost(double base_cost, double tax_rate){
 ```
 
 ### Passing Arrays into Functions
+
 To pass an array to a function, provide square brackets in the formal parameter description
+
 ```cpp
 void print_array(int numbers []);
 ```
+
 * Array elements are NOT copied.
 * Instead, it is the **memory address** of the array that is passed as an argument.
 * The function only knows the location of the *first element* in the array and *not* its actual size.
 * Therefore, we need to pass the *size* of the array to the function in order that it knows how many iterations to perform.
 
 Example:
+
 ```cpp
 void print_array(int numbers[], size_t size);
 
@@ -1678,9 +1688,11 @@ void print_array(int numbers[], size_t size){
     cout << numbers[i] << endl;
 }
 ```
+
 **NOTE**: Since we are passing in the location of the array in memory, we are actually modifying the values of that array, rather than creating a copy of that array.
 
 If you do **not** want your function to modify the values of the array, use the `const` keyword in the function parameters to indicate that they are *read-only* values and thus **cannot** be modified.
+
 ```cpp
 void clear_array(const int numbers [], size_t size){
   for (size_t i{0}; i < size; i++){
@@ -1690,6 +1702,7 @@ void clear_array(const int numbers [], size_t size){
 ```
 
 ### Pass by Reference
+
 To change the actual parameter from within the function body, we need to access its *location in memory* (i.e. the **adress** of the parameter).
 
 Functions that take arrays as arguments can use the `const` keyword in front of the parameter of the function declaration and prototype.
@@ -1697,6 +1710,7 @@ Functions that take arrays as arguments can use the `const` keyword in front of 
 However, for other variable types, we can pass a **reference** to the actual parameter so that the formal parameter will now be an *alias* for the actual parameter. To do so, add an ampersand (**`&`**) in front of the parameter you want to reference.
 
 Example:
+
 ```cpp
 void scale_number(int &num);
 void swap (int &a, int &b);
@@ -1723,11 +1737,13 @@ void swap(int &a, int &b){
   b = temp;
 }
 ```
+
 Passing a parameter by reference is an excellent way to speed up a program by eliminating steps that lead to storage and copy overhead.
 
-The following example uses pass by reference to print out the values from the vector **without** creating a copy of the vector in memory. However, it is still required to use the `const` keyword in the method declaration to ensure that the values of the vector are not modified in any way. 
+The following example uses pass by reference to print out the values from the vector **without** creating a copy of the vector in memory. However, it is still required to use the `const` keyword in the method declaration to ensure that the values of the vector are not modified in any way.
 
 Example:
+
 ```cpp
 void print(const std::vector<int> &v);
 
@@ -1744,12 +1760,15 @@ void print(const std::vector<int> &v) {
 ```
 
 ### Scope Rules
+
 C++ uses **scope** to determine where an indentifier can be used. This includes the use of:
+
 1. **static** or **lexical** scoping
 2. **local** or **Block** scope
 3. **Global** scope
 
 #### 1. Local or Block Scope
+
 Identifiers that have been declared *inside* a code block are only visible *within* the block `{}` where they are declared.
 
 These include *function parameters*, which are only visible inside the method body. Function local variables are only active while the function is executing. Therefore, they are NOT preserved between function calls.
@@ -1757,18 +1776,23 @@ These include *function parameters*, which are only visible inside the method bo
 With *nested* blocks, inner blocks can 'see' the identifiers in the outer block, but outer blocks cannot 'see' the identifiers in the inner block.
 
 #### 2. Static local variables**
+
 **Static local variables** are declared with the `static` qualifier and have their value preserved between function calls.
+
 ```cpp
 static int value {10};
 ```
+
 They are *only* initialized the first time the function is called. If no initializer value is provided, they are set to zero by default.
 
 #### 3. Global Scope
+
 Identifiers that are declared outside any function or class are said to have **global scope**; they are visible to *all parts* of the progrma after the gloval identifier has been declared.
 
 **NOTE**: Global variables are OK when using a as global constants but the best practice is to *not* use global variables.
 
-Example: 
+Example:
+
 ```cpp
 int num {100};    // Local to main
 int num1 {500};   // Local to main
@@ -1782,6 +1806,7 @@ cout << "Local num is " << num << " in main" << endl;
 
 cout << "Local num remains: " << num << " in main." << endl;
 ```
+
 ```txt
 Local num is 100 in main
 Local num is 200 in inner block within main
@@ -1790,7 +1815,9 @@ Local num remains: 100 in main.
 ```
 
 #### Function Calls
+
 Functions use the **function call stack**; it uses the **LIFO** (**Last In, First Out**) method of push and pop to add and remove functions from a function stack:
+
 * Functions must return control to function that called it.
 * Each time a function is called we create a new **activation record** and push it on stack.
 * When a function terminates we pop the activation record and return
@@ -1802,6 +1829,7 @@ Functions use the **function call stack**; it uses the **LIFO** (**Last In, Firs
 Stack size is *finite*; therefore, if the program produces too large of a stack in memory, the compiler will return a **Stack Overflow** exception.
 
 Example: 1 main function, 2 custom functions
+
 ```cpp
 int func1(int a, int b) {
   int result {};
@@ -1825,6 +1853,7 @@ int main() {
 ```
 
 Process in memory:
+
 ```txt
 main:
   push space for the return value
@@ -1845,6 +1874,7 @@ main:
 ```
 
 #### Inline Functions
+
 Since functions can have a certain amount of overhead that may lead to stack overflows, we can suggest the compiler to compile the *simpler* functions **inline**.
 
 **Inline functions** are faster functions that avoid function call overhead, and generate inline assembly code. However, overuse of inline functions can cause the cause bloats in your source code.
@@ -1852,6 +1882,7 @@ Since functions can have a certain amount of overhead that may lead to stack ove
 Regardless, some compiler optimizations are so sophisticated that they will likely inline functions even without your suggestion.
 
 Example:
+
 ```cpp
 inline int add_numbers(int a , int b) { // definition
   return a + b;
@@ -1865,6 +1896,7 @@ int main() {
 ```
 
 #### Recursive Functions
+
 A **recursive function** is a funciton that calls itself either directly or indirectly through another function.
 
 Recursive problem solving inolves establishing a base case to which your recursive function will fall back to, and dividing the rest of the problem into sub-problems and do recursive call.
@@ -1872,6 +1904,7 @@ Recursive problem solving inolves establishing a base case to which your recursi
 Very popular in mathematical functions ( factorial, Fibonacci, fractals, ...) and searching and sorting (binary search, search trees, ...)
 
 Example:
+
 ```cpp
 unsigned long long factorial (unsigned long long n) {
   if (n == 0)
@@ -1886,6 +1919,7 @@ int main() {
 ```
 
 **Warning**:
+
 * No base cases leads to infinite recursion (and thus stack overflow)
 * Recursive can be resource intensive
 * Only use recursive solutions when it makes sense
@@ -1894,35 +1928,43 @@ int main() {
 ## Pointers and References
 
 ### Pointers
+
 A **pointer** is a variable whose value is an *address* to either another variable or to a function.
 
 Pointers have a name, an address in memory, and value, which in this case is an address. To use a pointer, you **need to know** what type of variable it is pointing to.
 
 Why use pointers?
+
 * Inside functions, pointers can be used to access data that are defined *outside* the functions. Those variables may not be in scope so you can't access them by their name.
 * Pointers can operate on arrays *very efficiently*.
 * We can allocate memory dynamically on the heap or free store; the memory does not even have a variable name.
 * **Required** for Object-Oriented Programming in C++
-*  Can acess *specific* addresses in memory, which can be useful in embedded and systems applications
+* Can acess *specific* addresses in memory, which can be useful in embedded and systems applications
 
 #### Declaring Pointers
+
 ```cpp
 variable_type *pointer_name;
 ```
+
 * Pointers are read from *right to left* (&larr;):
 * The asterisk (`*`) can be placed next to the pointer name or to the variable type (the former is preferred)
+
 ```cpp
 int *int_pt;        // int_ptr points to an integer
 double* double_ptr; // double_ptr points to a double 
 char *char_ptr;     // char_ptr points to a character 
 string *string_ptr; // string_ptr points to a string
 ```
+
 * Initialize all pointer variables to **`nullprt`**
 
 ```cpp
 variable_type *pointer_name {nullptr};
 ```
+
 The `nullptr` keyword was first introduced in C++11. Alternatively, pointers can also be initialized to zero, meaning they are pointing *nowhere*.
+
 ```cpp
 int *int_ptr {}:         // Compiler will generate garbage data that could point anywhere
 double* double_ptr {0};       // Point nowhere
@@ -1931,9 +1973,11 @@ string *string_ptr {nullptr}; // Point nowhere
 ```
 
 #### Accessing the Pointer Addresss
+
 * To access the memory address of a variable, use the address operator: **`&`**
 * All variables are stored in unique addresses via a unary operator
 * The operand **cannot** be a constant or expression that evaluates to temporary values.
+
 ```cpp
 int num {10};
 
@@ -1949,14 +1993,16 @@ Address of num is: 0113FF0C
 ```
 
 ##### Using `sizeof` pointer variable
-* Do **not** confuse the *size of a pointer* with the *size of the value* it points to.
 
+* Do **not** confuse the *size of a pointer* with the *size of the value* it points to.
 * **All pointers** in a program have the **same size** irregardless of the data type they point to.
 
 #### Storing an Address in a Pointer Variable
+
 The compiler will ensure that the address stored in pointer variable is of the correct type.
 
 ##### Typed pointers:
+
 ```cpp
 int score {10};
 double high_temp{100.7};
@@ -1967,7 +2013,9 @@ score_ptr = &high_temp; // Compiler Error: "a value of type "double *" cannot be
 ```
 
 ##### The `&` address operator
+
 Pointers are variables: they can be changed, set to null, or be uninitialized.
+
 ```cpp
 int *p;
 cout << "\nValue of p is: " << p << endl;     // 000A11CC -> garbage value
@@ -1984,7 +2032,9 @@ Address of p is 00AFFF04
 sizeof p is 4
 Value of p is 0
 ```
+
 **NOTE**: When requesting the value of of a pointer, the compiler will in fact return the address of the variable to which it is pointing.
+
 ```cpp
 int score = 20;
 p = &score;
@@ -1993,11 +2043,13 @@ cout << "Value of p: " << p << endl; // 00CFFAF```
 ```
 
 #### Dereferencing a Pointer
+
 **Dereferencing** is to access the data that the pointer is pointing to, as opposed to the address of that data in memory.
 
 If your pointer has a valid address, then you can access the data at the address contained in the pointer by using the **derefencing operator**: **`*`**.
 
 **Example**: primitive type
+
 ```cpp
 int score {100};
 int *score_ptr {&score};
@@ -2013,7 +2065,8 @@ cout << *score_ptr << endl; // 200;
 ```
 
  **Example**: vector
- ```cpp
+
+```cpp
   vector<string> band { "Stevie", "Lindsey", "John"}; // init vector
   vector<string> *vector_string{nullptr}; // init vector pointer
 
@@ -2026,25 +2079,26 @@ cout << *score_ptr << endl; // 200;
   }
   cout << endl << endl;
   return 0;
- ```
+```
 
-
- ```txt
+```txt
  First member: Stevie
  Fleetwood Mac: Stevie Lindsey John
- ```
+```
 
 ### Dynamic Memory Allocation
+
 **Memory allocation** refers to the allocating storage from the heap at runtime.
 
 ![1680631172174](image/Notes/1680631172174.png)
 
 Pointers are placed on the *stack* while the variables that they reference are allocated and placed on the *heap*.
+
 * We often don't know how much storage we need until we need it
 * Storage can be allocated for a variable at run time.
 
-
 ##### Using `new` to allocate storage
+
 ```cpp
 int *int_ptr {nullptr};
 int_ptr = new int;        //  allocate an integer on the heap
@@ -2062,6 +2116,7 @@ return 0;
 * If a pointer is reassigned a new variable without *first* deleting the preceeding variable it pointed to will result in a **memory leak**.
 
 ##### Using `delete` to deallocate storage
+
 ```cpp
 int *int_ptr {nullptr};
 int_ptr = new int;        // allocate an integer on the heap
@@ -2070,6 +2125,7 @@ delete int_ptr;           // frees the allocated storage
 ```
 
 ##### Using `new[]` to allocate storage for an array
+
 ```cpp
 int *array_ptr {nullptr};
 int size {};
@@ -2081,6 +2137,7 @@ array_ptr = new int[size];  // allocate array on the heap
 ```
 
 ##### using `delete[]` to deallocate storage for an array
+
 ```cpp
 delete [] array_ptr;
 ```
@@ -2088,9 +2145,9 @@ delete [] array_ptr;
 **Warning**: too many memory leaks will cause the program to run out of memory and throw an instance of **`std:: bad_alloc'`**.
 
 ### Relationship between Arrays and Pointers
+
 * **Recall**: the value of an array name is the address of the *first element* in the array.
 * The value of a pointer variable is an address
-
 * If the pointer points to the same data type as the array element, then the pointer and array name can be used (almost) interchangeably.
 
 ```cpp
@@ -2105,7 +2162,9 @@ int *score_ptr {scores};
 cout << score_ptr << endl;  // 010FFB8C
 cout << *score_ptr << endl; // 100
 ```
+
 If we can use an array name and a pointer name interchangeably, then we can use **array subscripting** on a pointer.
+
 ```cpp
 int scores [] { 100, 95, 89};
 
@@ -2115,9 +2174,11 @@ cout << score_ptr[0] << endl;   // 100
 cout << score_ptr[1] << endl;   // 95
 cout << score_ptr[2] << endl;   // 89
 ```
+
 In other words, C++ does **not** use true arrays as other languages, since the array name is just a **refence** to its starting element.
 
 Consequently, this allows us to use pointers in expressions:
+
 ```cpp
 int scores [] { 100, 95, 89};
 
@@ -2127,13 +2188,15 @@ cout << score_ptr << endl;         // 006FF724
 cout << (score_ptr + 1) << endl;   // 006FF728
 cout << (score_ptr + 2) << endl;   // 006FF72C
 ```
-**Notice** that the address increments by 4; that is because the size of each integer in the array is equal to 4 bytes, so we are adding 4 to the previous address. 
+
+**Notice** that the address increments by 4; that is because the size of each integer in the array is equal to 4 bytes, so we are adding 4 to the previous address.
 
 The size of a data type is dependent on your machine and might be equal to some other value.
 
 When we add 1 to the pointer name, we are in fact telling the compiler to move one element down to get the address of the next element in the array.
 
 To get the actual values of the elements, simply use the *deference* (`*`) symbol.
+
 ```cpp
 cout << *score_ptr << endl;         // 100
 cout << *(score_ptr + 1) << endl;   // 95
@@ -2141,35 +2204,40 @@ cout << *(score_ptr + 2) << endl;   // 89
 ```
 
 #### Subscript and Offset notation equivalence
+
 ```cpp
 int array_name[] {1,2,3,4,5};
 int *pointer_name {array_name};
 ```
 
-| Subscript Notation | Offset Notation
-| :---- | :----
-| `array_name[index]` | `*(array_name + index)`
-| `pointer_name[index]` | `*(pointer_name + index)`
+| Subscript Notation      | Offset Notation             |
+| :---------------------- | :-------------------------- |
+| `array_name[index]`   | `*(array_name + index)`   |
+| `pointer_name[index]` | `*(pointer_name + index)` |
 
 ### Pointer Arithmetic
-C++ allows for **pointer arithmetic** but it only makes sense with raw arrays. 
+
+C++ allows for **pointer arithmetic** but it only makes sense with raw arrays.
 
 In order to use arithmetic expressions, you must ensure that the pointer and the variable are of the **same data type** or else you will get a compiler error.
 
 * (`++`) increments a pointer to point to the next array element, irrespective of the element type.
+
   * `int_ptr++;`
-
 * (`--`) decrements a pointer to point to the previous array element
+
   * `int_ptr--;`
-
 * (`+`) increment pointer by `n * sizeof(type)`
-  * `int_ptr += n;` or `int_ptr = int_ptr + n;`
 
+  * `int_ptr += n;` or `int_ptr = int_ptr + n;`
 * (`-`) decrement pointer by `n * sizeof(type)`
+
   * `int_ptr -= n;` or `int_ptr = int_ptr - n;`
 
-Comparing two pointers using (`==`) and (`!=`) will indicate whether the two pointers are pointing to the same object in memory, i.e. their memory addresses. 
+Comparing two pointers using (`==`) and (`!=`) will indicate whether the two pointers are pointing to the same object in memory, i.e. their memory addresses.
+
 * It does **not** compare the *actual values* stored in those objects.
+
 ```cpp
   string s1 {"Samano"};
   string s2 {"Samano"};
@@ -2183,6 +2251,7 @@ Comparing two pointers using (`==`) and (`!=`) will indicate whether the two poi
 ```
 
 To compare two data pointers, use the derefence (`*`) operand.
+
 ```cpp
   string s1 {"Samano"};
   string s2 {"Samano"};
@@ -2196,9 +2265,11 @@ To compare two data pointers, use the derefence (`*`) operand.
 ```
 
 ## OOP - Classes and Objects
+
 Identical to C# except where noted.
 
 **Encapsulation**: objects contain data AND operations that work on that data.
+
 * implementation-specific logic can be hidden
 * users of the class code to the interface since they don't need to know the implementation
 * more abstraction
@@ -2220,11 +2291,13 @@ In C++, you can create objects *dynamically* on the heap using **pointers** to r
 ```
 
 When declaring a class within another C++ file, you need to add a semicolon (`;`) at the end of the class.
+
 ```cpp
   class Player{ . . . };
 ```
 
 In addition, there is the option of initializing the class attributes without using a constructor.
+
 ```cpp
 class Player{
   // attributes
@@ -2236,6 +2309,7 @@ class Player{
 ```
 
 #### Accessing Class Members
+
 If we have an object, use the **dot operator**:
 
 ```cpp
@@ -2244,12 +2318,16 @@ If we have an object, use the **dot operator**:
   my_account.balance;
   my_account.deposit(1000.0);
 ```
+
 If we have a pointer to an object (member of pointer operator): we need to **dereference** the pointer first, then use the dot operator.
+
 ```cpp
   (*my_account).balance;
   (*my_account).deposit(1000.0);
 ```
+
 Or, use the member of pointer operator (**arrow operator**):
+
 ```cpp
   Account *my_account = new Account();
 
@@ -2258,17 +2336,21 @@ Or, use the member of pointer operator (**arrow operator**):
 ```
 
 ### Access Modifiers
+
 * `public`: accessible everywhere
 * `private`: accessible only by members or friends of the class
 * `protected`: accessible to members of derived classes
 
 #### `public`
+
 * Everything below the `public` keyword will be set to public.
 
 #### `private`
+
 * Everything below the `private` keyword will be set to private.
 
 **Example**:
+
 ```cpp
   class Player {
   private:
@@ -2282,12 +2364,15 @@ Or, use the member of pointer operator (**arrow operator**):
 ```
 
 Trying to access a private member will result in the following compiler error:
+
 ```txt
 member "[object_name]::[object_attribute]" (declared at line [X]) is inaccessible
 ```
 
 #### Implementing Member Methods
+
 **Member methods** are the C++ equivalent of *properties* in C#; they are methods with access to member attributes.
+
 * Can be implemented *inside* the class declaration
   * Implicitly inline
 * Can be implemented *outside* the class declaration
@@ -2297,6 +2382,7 @@ member "[object_name]::[object_attribute]" (declared at line [X]) is inaccessibl
   * `.cpp` file for the class implementation
 
 **Example**: Inside implementation
+
 ```cpp
   class Account{
     ...
@@ -2313,6 +2399,7 @@ member "[object_name]::[object_attribute]" (declared at line [X]) is inaccessibl
 ```
 
 **Example**: Outside implementation
+
 ```cpp
   class Account{
   ...
@@ -2331,7 +2418,9 @@ member "[object_name]::[object_attribute]" (declared at line [X]) is inaccessibl
 ```
 
 ##### Example: Separate implementation
+
 `Account.h` (header file): contains member method declarations
+
 ```cpp
   class Acount {
   private:
@@ -2341,14 +2430,17 @@ member "[object_name]::[object_attribute]" (declared at line [X]) is inaccessibl
       double gsset_balance();
   };
 ```
+
 > **Warning**: if we include this header file in more than one `.cpp` file, then the compiler will see the declaration for that class more than once and return an error stating that there are *duplicate declarations*.
 >
 > To get around this, we can use an **include guard** to ensure that the compiler will process this file only once regardless of the number of times it is included.
-> 
+>
 > An **include guard** is a set of three preprocessor directives that ensures that the file in question is only included *once*.
->  * `#ifndef` (if not defined): looks to see if the preprocessor has a symbol with particular symbol name (e.g. `_ACCOUNT_H_`)
->  * If so, then the preprocessor skips to the `#endif` directive.
+>
+> * `#ifndef` (if not defined): looks to see if the preprocessor has a symbol with particular symbol name (e.g. `_ACCOUNT_H_`)
+> * If so, then the preprocessor skips to the `#endif` directive.
 > * Else, the preprocessor goes to the `#define` directive to set the symbol. The compiler will then process the entire file.
+>
 > ```cpp
 > #ifndef _ACCOUNT_H_
 > #define _ACCOUNT_H_
@@ -2362,11 +2454,12 @@ member "[object_name]::[object_attribute]" (declared at line [X]) is inaccessibl
 > }
 >
 >  #endif
->```
+> ```
 >
 > Finally, notice the naming convention for the preprocessor symbol name:  \_[SYMBOL NAME]\_H\_
-> 
->Alternatively, some compilers can use the `#pragma once` preprocessor rather the above mentioned. However, you must check the documentation of the compiler to verify if this is possible.
+>
+> Alternatively, some compilers can use the `#pragma once` preprocessor rather the above mentioned. However, you must check the documentation of the compiler to verify if this is possible.
+>
 > ```cpp
 > #pragma once
 >
@@ -2377,14 +2470,15 @@ member "[object_name]::[object_attribute]" (declared at line [X]) is inaccessibl
 >      void set_balance(double bal);
 >      double get_balance();
 > }
->```
->&nbsp;
-
-
+> ```
+>
+> &nbsp;
 
 `Account.cpp` (class file): contain member method declaration/implementation.
+
 * For implementation to work, the class file must prepend an `#include` preprocessor directive followed by the name of the corresponding header file in double quotes (`""`)
 * **Double quotes** are used to indicate header files that are **local** and are  **not** part of the C++ standard library.
+
 ```cpp
 #include "Account.h"
 
@@ -2405,15 +2499,20 @@ int main() {
     return 0;
 }
 ```
+
 ### Constructors and Destructors
+
 Identical to C# except where noted.
 
 #### Destructors
+
 **Destructors** are special member methods that are invoked automatically when an object is destroyed.
+
 * Same name as the class proceeded with a tilde (~)
 * No return type and no parameters
 * Only **1** destructor is allowed per class, i.e. cannot be overloaded!
 * Useful to release memory and other resources
+
 ```cpp
 class Player {
   private:
@@ -2425,9 +2524,11 @@ class Player {
   ~Player();
 }
 ```
+
 When local objects go *out of scope*, their destructors are called automatically.
 
 In the case of a global object, the object is constructed, used, and then deleted using :
+
 ```cpp
 Player *enemy = new Player("Enemy", 1000, 0);
 delete enemy; // deconstructor called.
@@ -2436,9 +2537,11 @@ delete enemy; // deconstructor called.
 If **no** constructors or destructors are provided by the programmer, then C++ will **automatically** create empty constructors and destructor.
 
 #### Default constructor
+
 Undefined constructors will result in the C++ compiler creating instances of objects with garbage member values.
 
 We can override the default constructor by defining our own default constructor.
+
 ```cpp
 class Account {
   . . .
@@ -2449,8 +2552,10 @@ public:
   }
 }
 ```
+
 * However,  if we define a constructor with arguments, then C++ will **not generate** a default constructor and we will need to explicity define one.
 * Else, the objects created with the default dconstructor will result in compilation errors.
+
 ```cpp
 Account chris_account;                // Error
 Account doris_account;                // Error
@@ -2460,10 +2565,12 @@ Account bill_account {"Connor", 15000.0}; // OK
 ```
 
 ### Default Initialization Lists
+
 Rather than setting all data member values in the constructor body, we can instead use **construction initialization lists**:
+
 * More efficient &rarr; variables are initialized before the compiler enters the constructor body.
 * Immediately follows the parameter list
-initializes the data members as the object is created
+  initializes the data members as the object is created
 * Order of initialization is the **order of declaration** in the class, **not** that of the initialization list itself.
 
 ```cpp
@@ -2496,20 +2603,25 @@ Player::Player(std::string name_val, int health_val, int xp_val)
 ```
 
 #### Delegating constructors
+
 **Problem**:
+
 * Code for constructors is very similar
 * Duplicate code can lead to errors
 
 C++ allows for *delegating constructors:*
+
 * code for one constructor can call another in the initialization list
 * avoids duplicating code.
 
 **Process**:
+
 * Create a constructor with the *most parameters* using an initialization list.
 * Define subsequent constructors by calling the above constructor *with* the initializing data needed.
 * The constructor that is called by other overloaded constructors is called the **delegating constructor**
 
 Each constructor that is dependent on the delegating constructor will call the delegating constructor first before calling its own constructor.
+
 ```cpp
 class Player{
 private:
@@ -2532,7 +2644,9 @@ public:
 ```
 
 #### Default Constructor Parameters
+
 By assigning **default parameters** to one constructor, we can replicate the functionality of the delegating constructor with just *one constructor*.
+
 ```cpp
 class Player{
 private:
@@ -2547,6 +2661,7 @@ public:
   }
 };
 ```
+
 ```cpp
 // Implementing a single constructor
 Player::Player(std::string name_val, int health_val, int xp_val)
@@ -2558,26 +2673,32 @@ Player lucas {"Lucas"};               // Lucas, 0, 0
 Player villain {"Villain", 100, 55};  // Villain, 100, 55
 Player hero {"Hero", 100};            // Hero, 100, 0
 ```
+
 #### Copy Constructor
+
 When copying objects, C++ must create a new object from an existing object.
 Copies of objects are made when:
+
 * passing objects by value as a parameter
 * returning an object from a function by value
 * constructing one object based on another of the same class
 
 If not provided, the C++ compiler will provide its own copy constructor. This applies to copying any object by value.
+
 * Compiler copies the values of each data memberr ot the new object (*default memberwise copy)
 * Perfectly fine in many cases.
 
 **Warning**: If you have a pointer data member, then the pointer itself will be copied, *not the value it is pointing to*
 
 Best Practices for copy constructors:
+
 * Always provide a copy constructor when you class has raw pointer members
 * Provide the copy constructor with a **const reference** parameter
 * Use STL classes as they already provide copy constructors
 * Avoid using raw point data members when possible.
 
 **Declaring the Copy Constructor**
+
 ```cpp
 Type::Type(const Type &source);
 
@@ -2585,10 +2706,12 @@ Player::Player(const Player &source);
 
 Account::Account(const Account &source);
 ```
+
 * The Parameter list contains a single object of the same type as the class it belongs to.
 * The object is passed as a *reference* (`&`), to prevent the constructor from making copies of the pointer, and as a *constant* (`const`), to prevent modification of the source object.
 
 **Implementing the Copy Constructor**
+
 ```cpp
 Type::Type(const Type &source){
   // code or initialization list to copy the object
@@ -2607,11 +2730,13 @@ Account::Account(const Account &source)
 ```
 
 ### Shallow vs Deep Copying
+
 #### Shallow
 
 When executing a memberwise copy, each data member is copied from the source object. However, this means that *any pointer member* will be copied as well, rather than the data it points to.
 
 **Problem**: if either of the objects is destroyed, the other object will still point to the released storage area because because it continues to believe it is  still valid.
+
 ```cpp
 class Shallow {
 private:
@@ -2633,11 +2758,13 @@ Shallow::Shallow(int d) {
 	*data = d;
 }
 ```
+
 Shallow copy - only the pointer is copied - not what it is pointing to!
-**Problem`source` and the newly created object BOTH point to the SAME `data` location!
+**Problem `source` and the newly created object BOTH point to the SAME `data` location!
 
 **For example**:
 shallow.h
+
 ```cpp
 class Shallow {
 private:
@@ -2650,7 +2777,9 @@ public:
     ~Shallow();
 };
 ```
+
 shallow.cpp
+
 ```cpp
 void Shallow::set_data_value(int d) {
     *data = d;
@@ -2673,7 +2802,9 @@ Shallow::~Shallow(){
     std::cout << "Destructor freeing data" << std::endl;
 }
 ```
+
 main.cpp
+
 ```cpp
 void display_shallow(Shallow s){
     std::cout << s.get_data_value() << std::endl;
@@ -2682,7 +2813,7 @@ void display_shallow(Shallow s){
 int main() {
     Shallow obj1 {100};     // data points to location X with value 100
     display_shallow(obj1);  // 100
-    
+  
     Shallow obj2 { obj1};   // data points to location X with value 100
     obj2.set_data_value(1000)
     display_shallow(obj1);  // data points for both object point to location X BUT with value 1000 each.
@@ -2691,11 +2822,13 @@ int main() {
 ```
 
 ### Deep Copying
+
 **Deep Copying** creates a **copy** of the *pointed-to data*; each copy will have a pointer to a *unique* storage location in the heap.
 
 Use deep copying for when you have a *raw pointer* as a class data member.
 
 **deep.h**
+
 ```cpp
 class Deep {
 private:
@@ -2710,6 +2843,7 @@ public:
 ```
 
 **deep.cpp**
+
 ```cpp
 #include <iostream>
 #include "deep.h"
@@ -2744,9 +2878,11 @@ Deep::~Deep(){
     std::cout << "Destructor freeing data" << std::endl;
 }
 ```
+
 Deep copy - creates new storage *and* copies the values from original object.
 
 **main.cpp**
+
 ```cpp
 #include <iostream>
 #include "deep.h"
@@ -2770,11 +2906,14 @@ int main()
 ```
 
 ### Move Constructor
+
 Sometimes when we execute code, the compiler creates unnamed temporary values
+
 ```cpp
 int total {0};
 total = 100 + 200;
 ```
+
 * `100 + 200` is evaluated and `300` is stored in an unnamed temporary value
 * `300` is then stored in the variable `total`
 * then the temporary value is discarded
@@ -2786,12 +2925,14 @@ The **Move constructor** moves an object rather than copy it. It is optional but
 **Copy elision** is a compiler optimization technique that eliminates unnecessary copying via **RVO-Return Value Optimization**.
 
 **r-value references** are references to r-values; that is, they reference temporary objects.
+
 * Used by move constructor and move assignment operator to efficiently move an object rather than copy it.
 * R-value reference operator: **&&**
 
 > **NOTE**: An l-value reference is a reference that has an address to a variable with a name.
 
 **Example**: r-value references
+
 ```cpp
 int x {100}
 int &l_ref = x;     // l-value reference -> single '&'
@@ -2804,6 +2945,7 @@ int &&x_ref = x;    // compiler error: cannot assign r-value ref to l-value ref
 ```
 
 **Example**: l-value reference parameters
+
 ```cpp
 int x {100};         // x is an l-value
 
@@ -2812,9 +2954,11 @@ void func(int &num); // A
 func(x);      // calls A - x is an l-value  
 func(200);    // Error - 200 is an r-value
 ```
+
 The above error is caused because the compiler cannot bind non-const l-value refrence of type 'int&' to an rvalue of type 'int'.
 
 **Example**: r-value reference parameters
+
 ```cpp
 int x {100};         // x is an l-value
 
@@ -2823,9 +2967,11 @@ void func(int &&num); // A
 func(200);      // calls A - x is an r-value  
 func(x);    // Error - 200 is an l-value
 ```
+
 The above error is caused because the compiler cannot bind r-value reference of type 'int&&' to an l-value reference of type 'int'.
 
 **Example**: l-value and r-value reference parameters
+
 ```cpp
 int x {100};         // x is an l-value
 
@@ -2837,7 +2983,9 @@ func(200);    // calls B - 200 is an r-value
 ```
 
 ##### Inefficient copying
+
 **Example**: copy constructor
+
 ```cpp
 Move::Move(const Move &source)
     : data{source.data} {}
@@ -2851,7 +2999,8 @@ vec.push_back(Move{20});
 ```
 
 The compiler uses the move constructor to make copies of Move{10} and Move{20}, thus creating temporary values for each and repeatedly using deep copying more than once.
-```bash 
+
+```bash
 Constructor for: 10
 Constructor for: 10
 Copy constructor - deep copy for: 10
@@ -2870,51 +3019,63 @@ Instead of making a deep copy of the move constructor, move copying actually 'mo
 Original object owns data in the heap while the copied object holds a pointer to the data of the original object.
 
 **Syntax - r-value refrence**
+
 ```cpp
 Type::Type(Type &&source);
 Player::Player(Player &&source);
 Move::Move(Move &&source);
 ```
+
 **NOTE**:
+
 * No `const` qualifier as the parameter source has to be modified to null out its source.
 * Use of r-value reference via use of the `&&` sign.
 
 **Example**: move constructor prototype
+
 ```cpp
   Move(Move &&source);        // Move Constructor
 ```
 
 **Efficient copying**
 Move constructor definition
+
 ```cpp
   Move::Move(Move &&source)
     :data{source.data} {
       source.data = nullptr;
     }
 ```
+
 Here we are 'stealing' the data and then nulling out the source pointer.
 
 ---
+
 # Appendices
+
 ## C++ Setup and Configuration
 
 ## Makefiles
-Makefiles are configuration files used to automate the build process of software programs. They are used to specify the dependencies between source code files, object files, and executable files, and to define the commands that should be executed to build the program.
 
-They are written in a specific format that defines targets, dependencies, and commands to be executed when a target is Sbuilt.
+**Makefiles** (or **makefiles**) are configuration files used to automate the build process of software programs. They are used to specify the dependencies between source code files, object files, and executable files, and to define the commands that should be executed to build the program.
+
+They are written in a specific format that defines targets, dependencies, and commands to be executed when a target is built.
+
 * When a makefile is executed, the make utility reads the file and determines which targets need to be rebuilt based on their dependencies and modification times.
 * It then executes the necessary commands to build the target, which may involve compiling source code files, linking **object files**, or running various scripts.
 
 The simplest example would be:
+
 ```makefile
 main: main.o
   g++ -o main main.o
 ```
-* `g++`: C++ compiler used in example (GNU)
-* `-o`
 
+* `g++`: C++ compiler used in example (GNU)
+* `-o`: renames the output file to one of the programmer's choosing.
 
 ### Object (`.o`) Files
+
 In a Makefile, `.o` files are **object files** that are produced by compiling source code files.
 
 When compilling a C++ file, the compiler generates an object file containing the compiled code; that is, machine code that can be linked with other object files and libraries to create an executable program.
@@ -2922,6 +3083,7 @@ When compilling a C++ file, the compiler generates an object file containing the
 Output files in a Makefile can speed up the build process by only recompiling the source code files that have changed since the last build. This is because the compiler only needs to recompile the changed source files into new `.o` files, rather than recompiling all of the source files in the project.
 
 Here's an example Makefile rule that uses .o files:
+
 ```makefile
 my_program: main.o my_functions.o
     g++ -o my_program main.o my_functions.o
@@ -2933,36 +3095,49 @@ my_functions.o: my_functions.cpp
     g++ -c -o my_functions.o my_functions.cpp
 ```
 
- * `my_program` target depends on the `main.o` and `my_functions.o` files, which are produced by compiling the `main.cpp` and `my_functions.cpp` source code files, respectively. 
- * The `-c `flag with g++ tells the compiler to compile the source code into an object file without linking.
- * Only when the command to create `my_program` is envoked, will the compiler link the different output files together.
+* `my_program` target depends on the `main.o` and `my_functions.o` files, which are produced by compiling the `main.cpp` and `my_functions.cpp` source code files, respectively.
+* The `-c `flag with g++ tells the compiler to compile the source code into an object file without linking.
+* Only when the command to create `my_program` is envoked, will the compiler link the different output files together.
+
 ### Header files
-To use header files in a Makefile, you need to specify the dependencies between source files and header files. 
+
+To use header files in a Makefile, you need to specify the dependencies between source files and header files.
 
 **For example**:
+
 ```makefile
 my_program: main.cpp my_functions.cpp my_header.h
     g++ -o my_program main.cpp my_functions.cpp
 ```
-* The `my_program` rule specifies the dependencies between the source files `main.cpp`, `my_functions.cpp`, and the header file `my_header.h`. 
+
+* The `my_program` rule specifies the dependencies between the source files `main.cpp`, `my_functions.cpp`, and the header file `my_header.h`.
 * When any of these files change, make will rebuild the `my_program` target.
 
-When compiling ***C++ source files*** that use header files in directories other than that of the main program, you need to include the header files using the `-I` flag with the directory path where the header files are located. 
+When compiling ***C++ source files*** that use header files in directories other than that of the main program, you need to include the header files using the `-I` flag with the directory path where the header files are located.
 
 **For example**:
+
 ```makefile
 my_functions.o: my_functions.cpp my_header.h
     g++ -c -o my_functions.o my_functions.cpp -I/path/to/header/files
 ```
 
 ### Makefile Variables
-#### CXX and CXXFLAGS
-Makefiles use variables as shorthands for shell commands and arguments that can be reused across serveral make commands. Among the most common variables are `CXX` and `CXXFLAGS`.
 
-In a Makefile, **`CXX`** is a variable that specifies the C++ compiler to use when building C++ source files.
-**`CXXFLAGS`** contains compile options to the C++ compiler, including debug options, optimization level, warning levels, or any other extra flags
+Makefiles use variables as shorthands for shell commands and arguments that can be reused across serveral make commands. Makefile variables are useful in altering the processes of the following *3 programs* required to build of the C++ application:
+* The **C Preprocessor** provides the ability for the inclusion of header files and executing preprocessor instructions
+* The **GNU C++ Compiler** (**`g++`**) processes compilation, assembly and linking.
+* The **GNU Linker** (**`ld`**) combines a number of object and archive files, relocates their data and resolves symbol references.
+
+#### CXX and CXXFLAGS
+
+**`CXX`** and **`CXXFLAGS`** are the most common variables in a Makefile:
+
+* **`CXX`** specifies the C++ compiler to use when building C++ source files.
+* **`CXXFLAGS`** contains compile options to the C++ compiler, including debug options, optimization level, warning levels, or any other extra flags
 
 For example, consider the following Makefile:
+
 ```makefile
 CXX = g++
 CXXFLAGS = -Wall -Wextra -pedantic
@@ -2976,19 +3151,23 @@ main.o: main.cpp
 clean:
     rm -f main main.o
 ```
-In this example, the `CXX` variable is set to `g++,` which is the GNU C++ compiler. The `CXXFLAGS` variable is also set to a set of compiler options —`-Wall`, `-Wextra`, and `-pedantic`— that enable extra warnings and pedantic checks.
+
+The `CXX` variable is set to `g++`: the GNU C++ compiler.
+
+The `CXXFLAGS` variable feeds a set of compiler options —`-Wall`, `-Wextra`, and `-pedantic`— to enable extra warnings and pedantic checks:
+
 * `-Wall` enables a set of common warnings that can help detect potential issues in your code, such as warning about unused variables or uninitialized variables, which can lead to bugs or performance issues.
-
 * `-Wextra` enables additional warnings that are not included in -Wall. These warnings are often related to coding conventions and can help with writing more readable and maintainable code.
-
 * `-pedantic` makes the compiler strictly follow the C++ standard and issue warnings for non-standard code. It can help write code that is more portable and less likely to break on different compilers or platforms.
 
-**NOTE**: It's generally a good practice to enable these options when compiling C++ code, as they can help catch potential issues and improve the quality of your code. 
-
->**Warning** it's important to note that these options can also produce a large number of warnings, especially for existing codebases.
+> **NOTE**: It's generally a good practice to enable these options when compiling C++ code, as they can help catch potential issues and improve the quality of your code.
+>
+> **WARNING**: On the other hand, they can also produce a large number of warnings, especially for existing codebases.
 
 #### CPPFLAGS
+
 **`CPPFLAGS`** passes extra flags to the C++ *preprocessor* or any other programs that use the C++ preprocessor.
+
 * The C++ preprocessor does not need to be explicity called as it will be called once the C++ compiler invokes it.
 * THe most common case of **`CPPFLAGS`** to include the compiler search path using the **`-I`** option
 
@@ -3002,9 +3181,11 @@ main: main.o
 ```
 
 #### LDFLAGS
+
 **`LDFLAGS`** pass extra flags to the GNU linker **`ld`**. Similar to **`CPPFLAGS`** except these flags are automatically passed to the linker when the compiler invokes it.
+
 * The most common use is to specify directories where the libraries can be found by using the **`-L`** option.
-* *However*, do not include the names of the libraries.
+* However, do **not** include the names of the libraries in the variable.
 
 ```makefile
 LDFLAGS = -L. # Search for libraries in the current directory
@@ -3015,26 +3196,34 @@ main.o: main.c
 ```
 
 #### LDLIBS
-**`LDLIBS`** contains space-separated list of libraries that are by your programs.
-* For this flag, the **`l`** option followed by the name of the library is used.
+**`LDLIBS`** contains space-separated list of **shared libraries** that are required by the linker to match all of the dependencies listed by the program.
+
+Their file names are prefixed with **`lib`** and suffixed with **`.so`** or **`.so.1`** in the file explorer. 
+
+**NOTE**: **`LDLIBS`** should be included **`after`** you have listed all your source files. Otherwise, the linker will not be able to link the symbols properly.
+* You *must* preface a shared library with the flag **`-l`** before feeding it to the LDLIBS variable.
+* Do **not** enter the prefix or the suffix of the file when appending it to the **`LDLIB`** flag in your Makefile
+
 
 ```makefile
 LDFLAGS = -L. # Search for libraries in the current directory
           -L/usr/foo # Search for libraries in /usr/foo
 
-LDLIBS = -lm lfoo # Use limb and libfoo
+LDLIBS = -lm lfoo # Use libmb and libfoo
 
 main.o: main.c
   gcc $(LDFLAGS) -c main.c $(LDLIBS)
 ```
-**NOTE**: **`LDLIBS`** should be included *after* you have listed all your source files. Otherwise, the linker will not be able to link the symbols properly.
 
 #### MAKEFLAGS
-**`MAKEFLAGS`** are used in recursive invocations of **`make`** for projects that have modules or subsystems with their own `makefile`. 
+
+**`MAKEFLAGS`** are used in recursive invocations of **`make`** for projects that have modules or subsystems with their own `makefile`.
+
 * The top-level `makefile` will then recursively call `make` for each od the modules.
 * The `MAKEFLAGS` variable is automatically set up by `make` and contains all the flags and command line variables that you passed to the top-level `make`.
 
 #### Automatic Variables
+
 **Automatic variables** have values computed afresh for each rule that is executed, based on the target and the prerequisites of the rule.
 
 * **`$@`** is the file name of the target of the rule.
