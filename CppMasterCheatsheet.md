@@ -2934,87 +2934,94 @@ The **Move constructor** moves an object rather than copy it. It is optional but
 **Example**: r-value references
 
 ```cpp
-int x {100}
-int &l_ref = x;     // l-value reference -> single '&'
-l_ref = 10;         // change x to 10
+  int x {100}
+  int &l_ref = x;     // l-value reference -> single '&'
+  l_ref = 10;         // change x to 10
 
-int &&r_ref = 200;  // r-value reference -> double '&&'
-r_ref = 300;        // change r_ref to 300
+  int &&r_ref = 200;  // r-value reference -> double '&&'
+  r_ref = 300;        // change r_ref to 300
 
-int &&x_ref = x;    // compiler error: cannot assign r-value ref to l-value ref
-```
+  int &&x_ref = x;    // compiler error: cannot assign r-value ref to l-value ref
+  ```
 
 **Example**: l-value reference parameters
 
-```cpp
-int x {100};         // x is an l-value
+  ```cpp
+  int x {100};         // x is an l-value
 
-void func(int &num); // A
+  void func(int &num); // A
 
-func(x);      // calls A - x is an l-value  
-func(200);    // Error - 200 is an r-value
+  func(x);      // calls A - x is an l-value  
+  func(200);    // Error - 200 is an r-value
+  ```
+
+  The above error is caused because the compiler cannot bind non-const l-value refrence of type 'int&' to an rvalue of type 'int'.
+
+  **Example**: r-value reference parameters
+
+  ```cpp
+  int x {100};         // x is an l-value
+
+  void func(int &&num); // A
+
+  func(200);      // calls A - x is an r-value  
+  func(x);    // Error - 200 is an l-value
+  ```
+
+  The above error is caused because the compiler cannot bind r-value reference of type 'int&&' to an l-value reference of type 'int'.
+
+  **Example**: l-value and r-value reference parameters
+
+  ```cpp
+    int x {100};         // x is an l-value
+
+    void func(int &num); // A
+    void func(int &&Num); // B
+
+    func(x);      // calls A - x is an l-value  
+    func(200);    // calls B - 200 is an r-value
 ```
 
-The above error is caused because the compiler cannot bind non-const l-value refrence of type 'int&' to an rvalue of type 'int'.
-
-**Example**: r-value reference parameters
-
-```cpp
-int x {100};         // x is an l-value
-
-void func(int &&num); // A
-
-func(200);      // calls A - x is an r-value  
-func(x);    // Error - 200 is an l-value
-```
-
-The above error is caused because the compiler cannot bind r-value reference of type 'int&&' to an l-value reference of type 'int'.
-
-**Example**: l-value and r-value reference parameters
-
-```cpp
-int x {100};         // x is an l-value
-
-void func(int &num); // A
-void func(int &&Num); // B
-
-func(x);      // calls A - x is an l-value  
-func(200);    // calls B - 200 is an r-value
-```
-
-##### Inefficient copying
+#### Inefficient copying
 
 **Example**: copy constructor
 
 ```cpp
-Move::Move(const Move &source)
-    : data{source.data} {}
+  Move::Move(const Move &source)
+      : data{source.data} {}
 ```
 
 ```cpp
-Vector<Move> vec;
+  Vector<Move> vec;
 
-vec.push_back(Move{10});
-vec.push_back(Move{20});
+  vec.push_back(Move{10}); // 1
+  vec.push_back(Move{20}); // 2
 ```
+**Process**:
+1. Vector `vec` is given an r-value reference of type `Move`. 
+However, because it can only store l-value references, the compiler creates a temporary object out of `Move{10}` and then uses it to construct a deep copy (i.e. an **l-value** reference) of `Move{10}` to store in thearray.
+Once the deep copy is made, the compiler will call the destructor to free data from the temporary object.
+2. As the vector grows, objects need to be copied to the new storage creating many copies behind the scenes.
 
 The compiler uses the move constructor to make copies of Move{10} and Move{20}, thus creating temporary values for each and repeatedly using deep copying more than once.
 
 ```bash
-Constructor for: 10
-Constructor for: 10
-Copy constructor - deep copy for: 10
-Destructor freeing data for: 10
-Constructor for: 20
-Constructor for: 20
-Copy constructor - deep copy for: 20
-Constructor for: 10
-Copy constructor - deep copy for: 10
-Destructor freeing data for: 10
-Destructor freeing data for: 20
+  Constructor for: 10
+  Copy constructor - deep copy for: 10
+  Destructor freeing data for: 10
+  Constructor for: 20
+  Constructor for: 20
+  Copy constructor - deep copy for: 20
+  Constructor for: 10
+  Copy constructor - deep copy for: 10
+  Destructor freeing data for: 10
+  Destructor freeing data for: 20
 ```
 
-Instead of making a deep copy of the move constructor, move copying actually 'moves' theresource by copying the address of the resource from source to the current object *and* nulls out the pointer in the source pointer.
+Instead of making a deep copy of the move constructor, move copying actually *moves* the resource by copying the address of the resource from source to the current object *and* nulls out the pointer in the source pointer.
+
+#### Efficient copying
+
 
 Original object owns data in the heap while the copied object holds a pointer to the data of the original object.
 
@@ -3037,17 +3044,106 @@ Move::Move(Move &&source);
   Move(Move &&source);        // Move Constructor
 ```
 
-**Efficient copying**
-Move constructor definition
 
+Move constructor definition
 ```cpp
-  Move::Move(Move &&source)
-    :data{source.data} {
-      source.data = nullptr;
-    }
+  Move(Move &&source) noexcept
+      :data {source.data}{
+          source.data = nullptr;
+          std::cout << "Move constructor -moving resource: " << std::endl;
+  }
+```
+Example
+```cpp
+  int main () { 
+    std::vector<Move> vec;
+    vec.push_back(Move{10});
+    vec.push_back(Move{20});
+    
+    return 0;
+  }
 ```
 
-Here we are 'stealing' the data and then nulling out the source pointer.
+```bash
+  Constructor for: 10
+  Move constructor -moving resource: 
+  Destructor freeing data for nullptr
+  Constructor for: 20
+  Move constructor -moving resource: 
+  Move constructor -moving resource: 
+  Destructor freeing data for nullptr
+  Destructor freeing data for nullptr
+  Destructor freeing data for: 10
+  Destructor freeing data for: 20
+```
+Here we are 'stealing' the data and then nulling out the source pointer; as a result, there is no deep copying being done.
+
+### The `this` pointer
+**`this`** is a reserved keyword that contains the address of the object. Therefore, it's a *pointer* to the object that can **only** be accessed from inside the class scope.
+* It grants access to **all** class members and methods
+* Determines whether two objects are the same
+* Can be derefrenced (`*this`) to yield the current object.
+
+**NOTE**: other languages will use the keyword `self` instead.
+
+**Example**: `this` pointer
+```cpp
+void Account::set_balance(double bal){
+  balance = bal;  // this->balance is implied
+}
+```
+
+`this` is very useful for disambiguating identifier use
+```cpp
+void Account::set_balance(double balance){
+  this->balance = balance; // Unambiguous
+}
+```
+
+### Using `const` with Classes
+We can pass arguments to class member methods as `const` so that they cannot be modified by the function.
+
+We can also create `const` objects; however, passing them to methods that do not expect a `const`-type argument in their method prototype will result in compilation errors.
+
+```cpp
+const Player villain {"Villain", 100, 55};
+villain.set_name{"Nice guy"};                   // ERROR
+std::cout << villain.get_name() << std::endl;   // ERROR
+```
+In the case of the `cout` function, the compiler assumes that `get_name()` could potentially modify the object.
+
+When we call member methods on a const object, again we get a compiler error if that method contains a call to `get_name()`.
+```cpp
+const Player villain {"Villain", 100, 55};
+
+ void display_player_name(const Player &p) {
+  std::cout << p.get_name() << std::endl;
+ }
+
+ display_player_name(villain);  // ERROR
+```
+
+**Solution**: we must tell the compiler that the particular method in question will not modify the object; i.e., that it is a **const method**
+
+```cpp
+  class Player {
+    private:
+      ...
+    public:
+      std::string get_name() const;
+      ...
+  };
+```
+
+const-correctness
+```cpp
+  const Player villain {"Villain", 100, 55};
+  villain.set_name("Nice guy");                 // ERROR
+  std::cout << villain.get_name() << std::endl; // OK
+```
+
+
+
 
 ---
 

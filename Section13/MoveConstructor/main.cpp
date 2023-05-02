@@ -14,19 +14,19 @@ public:
     Move(int d){
         data = new int;
         *data = d;
-        std::cout << "Constructor for: " << data
+        std::cout << "Constructor for: " << *data
             << std::endl;
     }
-    Move(const Move &source)
-        : data{source.data} {
-        std::cout << "Copy constructor - deep"
-            << std::endl;
-    }
-    // Move(Move &&source) noexcept
-    //     :data {source.data}{
-    //         source.data = nullptr;
-    //         std::cout << "Move constructor -moving resource: " << std::endl;
+    // Move(const Move &source)
+    //     : data{source.data} {
+    //     std::cout << "Copy constructor - deep"
+    //         << std::endl;
     // }
+    Move(Move &&source) noexcept
+        :data {source.data}{
+            source.data = nullptr;
+            std::cout << "Move constructor -moving resource: " << std::endl;
+    }
    ~Move(){  
         if(data != nullptr){
             std::cout << "Destructor freeing data for: " << *data << std::endl;
@@ -39,7 +39,7 @@ public:
 
 int main () { 
     std::vector<Move> vec;
-    vec.push_back(Move{10}); // No variable name creates temp object (i.e. an r-value)
+    vec.push_back(Move{10});
     vec.push_back(Move{20});
     // vec.push_back(Move{30});
     // vec.push_back(Move{40});
