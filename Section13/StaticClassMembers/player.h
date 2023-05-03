@@ -4,11 +4,13 @@
 #include <string>
 
 class Player{
-private: // attributes (members)
+private:
+    static int num_players;
     std::string name;
     int health;
     int xp;
 public: 
+    static int get_num_players();
     void set_name(std::string);
     std::string get_name() const;
     void set_health(int);

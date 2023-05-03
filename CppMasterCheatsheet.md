@@ -3142,8 +3142,70 @@ const-correctness
   std::cout << villain.get_name() << std::endl; // OK
 ```
 
+**Takeaway**: any method that does *not* modify your object should be set as a `const` method.
 
+### Static Class Members (Functions)
+**Static Class Members** are members that belong to the class and *not* the objects. They most useful for storing class-wide information.
 
+**Static Class Functions** are functions that are independent of any objects and can be called using the class name.
+
+**Example**: Storing the total number of players in game using static members.
+1. Prepend the `static` modifier in front of the members and/or functions.
+
+player.h
+
+```cpp
+class Player{
+private:
+    static int num_players;
+...
+public: 
+    static int get_num_players();
+...
+};
+```
+
+2. For static methods, define the method implementation in the class file *without* including the `static` modifier.
+  For static members, initiliaze the starting value of the member.
+
+player.cpp
+
+```cpp
+#include "player.h"
+
+int Player::num_players = 0;
+
+int Player::get_num_players(){
+    return num_players;
+}
+...
+```
+3. In case of *global variable counters*, increment and decrement the value of the static member in the constructor and destructor, respectively.
+
+player.cpp
+```cpp
+Player::Player(std::string name_val, int health_val, int xp_val)
+    : name {name_val}, health {health_val}, xp {xp_val} { 
+        ++num_players;
+  }
+
+Player::~Player(){
+    --num_players;
+}
+```
+4. (Optional) Create a method in your main file that implements the static method.
+
+main.cpp
+```cpp
+#include <iostream>
+#include "player.h"
+
+void display_active_players() {
+    std::cout << "Active players: "
+        << Player::get_num_players()
+        << std::endl;
+}
+```
 
 ---
 
