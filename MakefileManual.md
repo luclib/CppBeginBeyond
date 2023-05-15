@@ -143,7 +143,6 @@ The `CXXFLAGS` variable feeds a set of compiler options —`-Wall`, `-Wextra`, a
 * `-pedantic` makes the compiler strictly follow the C++ standard and issue warnings for non-standard code. It can help write code that is more portable and less likely to break on different compilers or platforms.
 
 > **NOTE**: It's generally a good practice to enable these options when compiling C++ code, as they can help catch potential issues and improve the quality of your code.
->
 > **WARNING**: On the other hand, they can also produce a large number of warnings, especially for existing codebases.
 
 #### CPPFLAGS
