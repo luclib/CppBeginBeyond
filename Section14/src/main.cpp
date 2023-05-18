@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../include/Mystring.h"
+#include "Mystring.h"
 
 int main() {
     Mystring empty;

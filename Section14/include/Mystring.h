@@ -3,7 +3,7 @@
 
 class Mystring {
 private:
-    char *str;  // C-style string
+    char* str;  // C-style string
 
 public:
     Mystring();                         // No-args constructor
