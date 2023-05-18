@@ -1,3 +1,2 @@
-output/*
-bin/*
-*.o
+**/obj/
+**/bin/

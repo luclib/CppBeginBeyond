@@ -1,4 +1,4 @@
-## Makefiles
+# Makefiles
 
 **Makefiles** (or **makefiles**) are configuration files used to automate the build process of software programs running in **Unix-like** operating systems (e.g. **Linux**).
 
@@ -11,10 +11,29 @@
 Makefiles are written in a specific format that defines targets, dependencies, and commands to be executed when a target is built. 
 
 * When a Makefile is executed, the make utility reads the file and determines which targets need to be rebuilt based on their dependencies and modification times.
-&nbsp;
 * It then executes the necessary commands to build the target, which may involve compiling source code files, linking **object files**, or running various scripts.
 
-### MakefileSyntax
+>**Note**
+ The following guide uses **C++** as the programing language for its sample applications, and the **GNU make** set of build automation tools, including the **GCC compiler** selection for the C/C++ language. These are installed by default in *Debian-based* distributions.
+>
+>Other compiler sets like **LLVM** are available for other Linux distributions, while Visual Studio comes with it own C/C++ compiling tools such as **MSVC**, **Clang**, **CMake**, and **MSBuild** for building C/C++ application in *Windows*.
+
+## The **`make`** process
+
+The entire building process of Makefiles comprises three distincts steps:
+1. **Preprocessing**
+2. **Compilation**
+3. **Linking**
+
+Each of these processes is handled by a separate program in the GNU make tool set. For C++ programs, these are:
+ * The **C Preprocessor** that provides the ability for the inclusion of C++ header files and executing preprocessor instructions marked by the `#` statements at top and bottom of the header files.
+* The **GNU C++ Compiler** (**`g++`**) that processes compilation, assembly and linking of the target and its dependencies.
+* The **GNU Linker** (**`ld`**) combines a number of object and archive files, relocates their data and resolves the symbol references marked by the `$()` in the target commands.
+
+Each of these steps is important to keep in mind, especially when building complex `make` projects that contain separate directories for header files, source code files, and shared libraries.
+
+
+## Makefile Syntax
 A Makefile consists of a set of *rules* with the following syntax:
 ```Makefile
 targets: prerequisites
@@ -25,36 +44,45 @@ targets: prerequisites
 * The *targets* are file names separated by spaces. Generally, there is only one per rule.
 * The *commands* are a series of steps typically used to make the target.
 * The *prerequisites* are also file names, separated by spaces, that need to exist before the commands for the target can be run.
-  These are also called *dependencies* and can be thought of as arguments that the target needs to be executed.
+  These are also called *dependencies* and can be thought of as the arguments that the target needs to execute its commands.
 
-The simplest target consists of compiling and building an executable file. Suppose we are working with a single directory that contains a `main.cpp` file and a single `Makefile`:
+All of the targets are to be run from the *command line*. 
 
+### Single-directory projects
+
+ The simplest target consists of compiling and building an executable file with a *single* command, but it can **only** take place in single-folder projects.
+ 
+ In the following example, we are working with a single directory that contains a `main.cpp` file and a single Makefile:
 ```Makefile
 main: main.cpp
     g++ -o main main.cpp
 ```
-* `main`: the target of the build file; also the name of the command to be run in the command terminal.
-* `g++`: the name of  the C++ compiler we are using to build and run the code.
-* `-o`: an argument that allows us to rename our executable file to `main`.
+* `main` is the target of the build file; it is also the name of the command to be run in the command terminal.
+* `g++` is the name of  the C++ compiler we are using to build and run the code.
+* `-o` an argument that allows us to rename our executable file to `main`. 
+If we choose not to append `-o` to our `make` command, then the compiler will name the file **`a.out`** by default.
 * `main.cpp`: our dependency.
-> **Note**: if we choose not to append `-o` to our `make` command then the compiler, by default, will create the file **a.out**: the standard compiled executable.
 
-To run a Makefile, we need our terminal to be open at the *root project directory* and then run `make` followed by the name of the target.
+
+To run a Makefile, we need to open our terminal at the *root project directory* and then run `make`, followed by the name of the target.
 ```bash
 make main
 ```
 
-### Adding depedencies
+If more source files were added to our project directory that `main.cpp` depended on, we would simply append these to our target:
+```cpp
+main: main.cpp source1.cpp source2.cpp
+    g++ -o main main.cpp
+```
 
-Whereas the simplest Makefile requires only a single command, most projects will undoubtedly contain one or more dependencies.
-
-In total, the `make` process relies on **two other programs**, in addition to the compiler, to build the target program.
-* The **Preprocessor** provides the abilites to include header files and execute preprocessor instructions.
-* The **Linker** combines a number of object and archive files, and relocates their data to resolve references.
-
+#### Headers and Source Files
+Most, if not all, C++ programs will divide their classes into headers files and source files (see **C++ manual** for further details).
+* **header file** (**`*.h`**) contain all of the class members and function prototypes (i.e. method declarations).
+* **source file** (**`*.cpp`**) contains the function definitions or implementations.
 
 
-### Object (`.o`) Files
+
+### Object (`*.o`) Files
 In a Makefile, `.o` files are **object files** that are produced by compiling source code files.
 
 When compilling a C++ file, the compiler generates an object file containing the compiled code; that is, machine code that can be linked with other object files and libraries to create an executable program.
@@ -67,7 +95,7 @@ Here's an example Makefile rule that uses .o files:
 my_program: main.o my_functions.o
     g++ -o my_program main.o my_functions.o
 
-main.o: main.cppe
+main.o: main.cpp
     g++ -c -o main.o main.cpp
 
 my_functions.o: my_functions.cpp
@@ -105,12 +133,6 @@ my_functions.o: my_functions.cpp my_header.h
 
 Makefiles use variables as shorthands for shell commands and arguments that can be reused across serveral make commands.
 
-In C++, Makefile variables are needed to alter the process of the three component pogram of our automation system.
-* The **C Preprocessor** provides the ability for the inclusion of C++ header files and executing preprocessor instructions marked by the `#` statements at top and bottom of the header files.
-* The **GNU C++ Compiler** (**`g++`**) processes compilation, assembly and linking of the target and its dependencies.
-* The **GNU Linker** (**`ld`**) combines a number of object and archive files, relocates their data and resolves the symbol references marked by the `$()` in the target commands.
-
-
 #### CXX and CXXFLAGS
 
 **`CXX`** and **`CXXFLAGS`** are the most common variables in a Makefile:
@@ -147,10 +169,10 @@ The `CXXFLAGS` variable feeds a set of compiler options —`-Wall`, `-Wextra`, a
 
 #### CPPFLAGS
 
-**`CPPFLAGS`** passes extra flags to the C++ *preprocessor* or any other programs that use the C++ preprocessor.
+**`CPPFLAGS`** passes extra flags to the C **P**re**p**rocessor (not to be confused with **C** **P**lus**P**lus!) or any other programs that use the C++ preprocessor.
 
 * The C++ preprocessor does not need to be explicity called as it will be called once the C++ compiler invokes it.
-* THe most common case of **`CPPFLAGS`** to include the compiler search path using the **`-I`** option
+* The most common case of **`CPPFLAGS`** to include the compiler search path using the **`-I`** option
 
 ```Makefile
 CXX = g++
@@ -160,6 +182,7 @@ CPPFLAGS = -I /path/to/header_files
 main: main.o
     $(CXX) $(CXXFLAGS) $(CPPFLAGS) -o main main.o
 ```
+**Note**:  `$(CXXFLAGS)` and `$(CPPFLAGS)` are **only useful** for the **compilation** phase; that is when Make is compiling the source files into object files. There is no need to add these in the executable target!
 
 #### LDFLAGS
 
@@ -195,6 +218,8 @@ LDLIBS = -lm lfoo # Use libmb and libfoo
 main.o: main.c
   gcc $(LDFLAGS) -c main.c $(LDLIBS)
 ```
+
+>**Note**: When using the **`g++`** driver program, you need to add the option `-Wl,-rpath,/path/to/library/directory` after listing the library file names.
 
 #### MAKEFLAGS
 
