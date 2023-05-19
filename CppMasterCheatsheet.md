@@ -1815,8 +1815,6 @@ Functions use the **function call stack**; it uses the **LIFO** (**Last In, Firs
 * Local variables and function parameters are allocated on the stack.
 
 **Memory Diagram**
-![1680541170865](image/Notes/1680541170865.png)
-
 Stack size is *finite*; therefore, if the program produces too large of a stack in memory, the compiler will return a **Stack Overflow** exception.
 
 Example: 1 main function, 2 custom functions
@@ -1844,7 +1842,6 @@ int main() {
 ```
 
 Process in memory:
-
 ```txt
 main:
   push space for the return value
@@ -1865,7 +1862,6 @@ main:
 ```
 
 #### Inline Functions
-
 Since functions can have a certain amount of overhead that may lead to stack overflows, we can suggest the compiler to compile the *simpler* functions **inline**.
 
 **Inline functions** are faster functions that avoid function call overhead, and generate inline assembly code. However, overuse of inline functions can cause the cause bloats in your source code.
@@ -3220,4 +3216,335 @@ The majority of C++'s operators can be overloaded **except**:
 * `[]`, `()`, `->` and the assignment operator (`=`) **must** be declared as member methods
 * Other operators can be declared as member methods or global functions
 
+### Copy assignment operator (=)
+C++ provides a default assignment operator used for assigning one object to another.
+* This is **NOT** the same as using initialization operator `{}` followed by `=` to produce a Shallow copy.
 
+```cpp
+Mystring s1 {"Sam"};  // Initialization
+Mystring s2 = s1;     // NOT assignment => same as Mystring s2 {s1};
+
+s2 = s1;    // Assignment, s2 has not been previously initialized.
+```
+Since we are dealing with raw pointers as data members, we need to overload the assignment operator to use *deep copying* instead.
+
+**Process**
+1. In the method declaration, use keyword `operator` follower by the symbol of the operator that you want to choose.
+2. If one of the data member is a *raw pointer*, then use a reference to the data object (i.e. **deep copying**) for the method implementation.
+
+**Note**: When the reference sign (`&`) is placed *before* the function name, it means it will return by reference.
+
+```cpp
+Type &Type::operator=(const Type &rhs);
+```
+For the Mystring class:
+```cpp
+Mystring &Mystring::operator=(const Mystring &rhs);
+```
+From now on, when we write `s2 = s1`, we will be actually calling our overloaded operator method `s2.operator=(s1)`.
+
+Method definition
+```cpp
+Mystring &Mystring::operator=(const Mystring &rhs){
+    if (this == &rhs)
+        return *this;
+    
+    delete [] str;
+    str = new char[std::strlen(rhs.str) + 1];
+    std::strcpy(str, rhs.str);
+
+    return *this;
+}
+```
+**Breakdown**
+* Check for self assignment, return current object if the rhs object is the same.
+```cpp
+  if (this == &rhs)
+      return *this;
+```
+* Deallocate storage for `this->str` since were are overwriting it.
+```cpp
+  delete [] str;
+```
+* Allocate storage for the deep copy.
+```cpp
+  str = new char[std::strlen(rhs.str) + 1];
+```
+* Perform the copy
+```cpp
+  std::strcpy(str, rhs.str)
+```
+* Return the current object by reference to allow chain assignment.
+```cpp
+  return *this;
+```
+
+
+### Move assignment operator (=)
+
+Template
+```cpp
+Type &Type::operator=(Type &&rhs);
+```
+Method declaration
+```cpp
+Mystring &Mystring::operator=(My string &&rhs);
+```
+
+Method definition
+```cpp
+Mystring &Mystring::operator=(My string &&rhs){
+  if (this == &rhs)
+    return *this;
+  delete [] str;
+
+  rhs.str = nullptr;
+
+  return *this;
+}
+```
+**Breakdown**
+* Check for self assignment, return current object if the rhs object is the same.
+```cpp
+  if (this == &rhs)
+      return *this;
+```
+* Deallocate storage for `this->str` since were are overwriting it.
+```cpp
+  delete [] str;
+```
+* Steal the pointer from the rhs object nand assign it to `this->str`
+```cpp
+  str = rhs.str;
+```
+* Null out the rhs pointer
+```cpp
+  rhs.str = nullptr;
+```
+* Return the current object by reference to allow chain assignment.
+```cpp
+  return *this;
+```
+
+### Overloading unary operators as member methods (++, --, -, !)
+Template
+```cpp
+Return Type Type::operatorOp();
+```
+
+Method declarations
+```cpp
+Number Number::operator-() const;
+Number Number::operator++();      // pre-increment 
+Number Number::operator++(int);   // post-increment
+bool Number::operator!() const;
+```
+
+**Example**: Mystring `operator-` to make lowercase
+```cpp
+Mystring dude1 {"JOHN"};
+Mystring dude2;
+
+dude1.display(); // JOHN 
+
+dude2= -dude;    // player
+
+dude1.display(); // JOHN
+dude2.display(); // john
+```
+
+Method defintion
+```cpp
+Mystring Mystring::operator-() const {
+  char *buff = new char[std::strleng(str) + 1];
+  std::strcpy(buff, str);
+  for (size_t i=0; i < std::strlen(buff); i++)
+    buff[i] = std::tolower(buff[i]);
+  Mystring tem {buff};
+  delete [] buff;
+  return temp;
+}
+```
+
+### Overloading binary operators as member methods (+, -, ==, !=, <, >, etc.)
+Declaration
+```cpp
+Number Number::operator+(const Number &rhs) const;
+Number Number::operator-(const Number &rhs) const;   // pre-increment 
+Number Number::operator==(const Number &rhs) const;   // post-increment
+bool Number::operator<(const Number &rhs) const;
+
+Number n1 {100}, n2 {200};
+Number n3 = n1 + n2;        // n1.operator+(n2)
+n3 = n1 -n2;                // n1.operator-(n2)
+if (n1 == n2) . . .         // n1.operator==(n2)
+```
+
+**Example**: Mystring `operator==` (equality)
+
+Goal: compare the string contents of the pointers rather than their memory addresses.
+```cpp
+bool Mystring::operator==(const Mystring &rhs) const {
+  if(std::strcmp(str, rhs.str) == 0)
+    return true;
+  else
+    return false;
+}
+```
+
+**Example**: Mystring `operator+` (concatenation)
+```cpp
+My string larry {"Larry"};
+Mystring moe {"Moe"};
+Mystring stooges {" is one of the three stoogers"};
+
+Mystring result = larry + stoogers;
+    // lary.operator+(stooges)
+result = moe + " is also a stooge";
+    // moe.operator+("is also a stooge");
+result = "Moe" + stooges; // "Moe".operator+(stooges) --> ERROR
+```
+Definition
+```cpp
+Mystring Mystring::operator+(const Mystring &rhs) const {
+  size_t buff_size = std::strlen(str) +
+                     std::strlen(rhs.str) + 1;
+  char *buff = new char[buff_size];
+  std::strcpy(buff, str);
+  std::strcat(buff, rhs.str);
+  Mystring temp {buff};
+  delete [] buff;
+  return temp;
+}
+```
+### Overloading operators using non-member or global functions
+Since we cannot use a `this` pointer to refer to lhs when dealing with global or non-member functions,such functions are often declared as **`friend`** functions.
+
+#### Unary operators
+
+Template
+```cpp
+ReturnType operatorOp(Type &obj);
+```
+
+**Example**: convert a string to lower case:
+
+Declaration
+```cpp
+friend Mystring foperator-(const Mystring &obj);
+```
+Defintion
+```cpp
+Mystring operator-(const Mystring &obj) {
+  char *buff = new char[std::strleng(obj.str) + 1];
+  std::strcpy(buff, obj.str);
+  for (size_t i=0; i < std::strlen(buff); i++)
+    buff[i] = std::tolower(buff[i]);
+  Mystring tem {buff};
+  delete [] buff;
+  return temp;
+}
+```
+**Warning**: You cannot have both a member and non-member version of the method in your code; otherwise, the compiler would not know which one to use.
+
+#### Binary operators
+Template
+```cpp
+ReturnType operatorOp(const Type &lhs, const Type &obj);
+```
+
+Declaration
+```cpp
+friend Mystring operator==(const Mystring &obj);
+```
+**Example:** `operator==`
+
+Definition
+```cpp
+bool operator=(const Mystring &lhs, const Mystring &rhs){
+  if(std:strcmp(lhs.str, rhs.str) == 0)
+    return true;
+  else
+    return false;
+}
+```
+* If declared as a friend of `Mystring`, the method can access private `str` attribute
+* Otherwise, we need getter methods.
+
+
+**Example:** `operator+` (concatenation)
+Definition
+```cpp
+Mystring operator+(const Mystring &lhs, const Mystring &rhs) const {
+    size_t buff_size = std::strlen(lhs.str) +
+                       std::strlen(rhs.sts) + 1;
+    char buff = new char[buf_size]
+    std::strcpy(buff, lhs.str);
+    std::strcat(buff, rhs.str);
+    Mystring temp {buff};
+    delete [] buff;
+    return temp;
+}
+```
+Implementation
+```cpp
+Mystring larry {"Larry"};
+Mystring moe {"Moe"};
+Mystring stooges { " is one of the three stooges"};
+
+Mystring result = larry + stoogers;
+      // operator+ (larry,stooges);
+
+result = moe + " is also a stooge";
+      // operator+(moe, " is also a stooge");
+
+result = "Moe " + stooges;  // OK with non-member functions
+```
+* **Note**: Because it is a non-member function, the lhs does not have to be an object of the class type. Either one or both arguments can be of mystring type.
+
+#### Overloading stream insertion (<<) and extraction (>>) operators
+The insertion and extraction operators (`<<`, `>>`) allows us to insert and extract our class instances to and from streams, respectively.
+
+```cpp
+using namespace std;
+
+   cout << larry << endl; // Larry
+   Player hero {"hero", 100, 33};
+   cout << hero << endl; // {name: hero, health: 100, xp: 33}
+```
+
+* Makes custom class feel and behave like a standard C++ class.
+
+It makes no sense to implement stream insertion and extraction operators as members method.
+The left operand must be a user-defined class, which is is not the case with member methods.
+
+Declarations
+```cpp
+// Insertion
+friend std::ostream &operator>>(const std::ostream &os, const Mystring &rhs);
+// Extraction
+friend std::istream &operator<<(std::istream &is, Mystring &rhs);
+```
+* Note the insertion operator does not have its parameters set to `const` as we intend to modify the final `istream` object.
+
+**stream insertion operator (<<)**
+```cpp
+std::ostream &operator<<(std::ostream &os, const Mystring &obj) {
+  os << obj.str;  // if friend function
+  // os << object.get_str(); // if not friend function.
+  return os;
+}
+```
+* Return a reference to the `ostream` so we can keep inserting values into it.
+* Do **not** return `ostream` by value!
+
+**stream extraction operator (>>)**
+```cpp
+std::istream &operator>>(std::istream &is, Mystring &rhs){
+  char *buff = new char[1000];
+  is >> buff;
+  rhs = Mystring{buff};
+  delete buff;
+  return is;
+}
+```
