@@ -42,6 +42,12 @@
     a. [Classes vs Objects](#classes-vs-objects)
     b. [Access Modifiers](#access-modifiers)
     b. [Constructors and Destructors](#constructors-and-destructors)
+12. [Operator Overloading](#operator-overloading)
+    a. [Move Assignment Operator (=)](#move-assignment-operator)
+    b. [Overloading Unary Operator as Member Methods](#overloading-unary-operators-as-member-methods)
+    c. [Overloading Binary Operators as Member Methods](#overloading-binary-operators-as-member-methods--------etc)
+    d. [Overloading operators using on-member or global functions](#overloading-operators-using-non-member-or-global-functions)
+    
 
 ## Program structure
 
