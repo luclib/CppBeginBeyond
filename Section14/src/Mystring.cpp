@@ -114,7 +114,7 @@ std::istream &operator>>(std::istream &is, Mystring &rhs){
   return is;
 }
 // Overloaded Insertion
-std::ostream &operator<<(const std::ostream &os, const Mystring &rhs){
-    os << rhs.str;
+std::ostream &operator<<(std::ostream &os, const Mystring &rhs){
+    os << rhs.get_str();
     return os;
 }

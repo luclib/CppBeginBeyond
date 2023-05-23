@@ -47,7 +47,7 @@
     b. [Overloading Unary Operator as Member Methods](#overloading-unary-operators-as-member-methods)
     c. [Overloading Binary Operators as Member Methods](#overloading-binary-operators-as-member-methods--------etc)
     d. [Overloading operators using on-member or global functions](#overloading-operators-using-non-member-or-global-functions)
-    
+
 
 ## Program structure
 
@@ -1205,7 +1205,7 @@ They include:
 | `islower(c)` | Returns `true` if `c` is a lowercase letter      |
 | `isprint(c)` | Returns `true` if `c` is a printable character   |
 | `ispunct(c)` | Returns `true` if `c` is a punctuation character |
-| `issuper(c)` | Returns `true` if `c` is a uppercase letter      |
+| `isupper(c)` | Returns `true` if `c` is a uppercase letter      |
 | `isspace(c)` | Returns `true` if `c` is whitespace              |
 
 #### Converting characters
@@ -3527,11 +3527,11 @@ The left operand must be a user-defined class, which is is not the case with mem
 Declarations
 ```cpp
 // Insertion
-friend std::ostream &operator>>(const std::ostream &os, const Mystring &rhs);
-// Extraction
 friend std::istream &operator<<(std::istream &is, Mystring &rhs);
+// Extraction
+friend std::ostream &operator>>(const std::ostream &os, const Mystring &rhs);
 ```
-* Note the insertion operator does not have its parameters set to `const` as we intend to modify the final `istream` object.
+* **Note**: the insertion operator does not have its parameters set to `const` as we intend to modify the final `istream` object.
 
 **stream insertion operator (<<)**
 ```cpp

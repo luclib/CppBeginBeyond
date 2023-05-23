@@ -19,7 +19,6 @@ public:
     Mystring operator+(const Mystring &rhs) const;
     Mystring &operator-() const;   // lower case conversion
     bool operator==(const Mystring &rhs) const;
-
     friend std::ostream &operator>>(const std::ostream &os, const Mystring &rhs);
     friend std::istream &operator<<(std::istream &is, Mystring &rhs);
 };
