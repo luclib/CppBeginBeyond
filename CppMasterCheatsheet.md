@@ -689,9 +689,11 @@ Common operators can be groupex as follows:
 > \* Assignment does **not** equal initialization, as it is done _after_ a variable is initialized.
 
 #### Order of operations
+  \\\\ - backslash
 
-**PEMDASS**
-
+  ```cpp
+  cout << "Hello\tthere\nmy friend\n";
+  ```
 1. **P**arentheses
 2. **E**xponents
 3. **M**ultiplication
@@ -1218,8 +1220,11 @@ They include:
 ### C-Style Strings
 
 A **C-style string** is a sequence of characters, contigous in memory, that is implemented as an array of characters.
+  \\\\ - backslash
 
-- Termined by a null chracter (`null`)
+  ```cpp
+  cout << "Hello\tthere\nmy friend\n";
+  ```
   - null - character with a value of zero (represented by `\0` in memory)
 - Referred to as zero or null terminated string
   - This implies that the compiler will allocate _an extra space_ in memory for the null character
@@ -3554,3 +3559,22 @@ std::istream &operator>>(std::istream &is, Mystring &rhs){
   return is;
 }
 ```
+
+## Inheritance
+### What is inheritance?
+**Inheritance** is a process of creating new classes from existing classes whereby a new class contains the data and behaviors of the existing class and a new class' behaviors can be *modified* without modifying that of its existing class.
+* **Single Inheritance**: new class is created form another 'single' class
+* **Multiple Inheritance**: new class is created from two (or more) other classes.
+
+### Terminology and Notation
+**Base class** (parent class, super class): the class being extended or inherited from.
+**Derived class** (child class, sub class): class being created from the Base class; it will inherit attributes and operations from Base class
+
+**Is-A** relationship:
+* Public inheritance
+* Derived classes are sub-types of their Base classes
+* Can use a derived class object wherever we use a base class object
+
+**Generalization**: combining similar classes inot a single, more general class based on common attributes.
+**Specialization**: creating new classes from existing classes that provide more specialized attributes or operations.
+**Inheritance** or **Class Hierarchy**: Organization of our inheritance relationships.
