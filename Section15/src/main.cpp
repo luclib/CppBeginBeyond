@@ -2,34 +2,39 @@
 #include <Account.h>
 #include <Savings_Account.h>
 
+class Base {
+    // Note: friends of Base have access to all
+public:
+    int a {0};
+    void display() { std::cout << a << "," << b << ", " << c << std::endl;}  //member method has access to all
+protected:
+    int b {0};
+private:
+    int c {0};
+
+};
+
+class Derived: public Base {
+    // Note: friends of Derived have access to only what Derived has access to
+public:
+    void access_base_members(){
+        a = 100;    // OK -> public in base, public in derived
+        b = 200;    // OK -> protected in base, protected in derived
+        c = 300;    // Error: not accessible.
+    }
+};
+
 int main() {
-    // Use the Account class
-    std::cout << "\n========Account============================" << std::endl;
-    Account acc{};
-    acc.deposit(2000.0);
-    acc.withdraw(500.0);
+    std::cout << "===Base member access from base objects ============" << std::endl;
+    Base base;
+    base.a = 100;   // OK
+    base.b = 200;   // Error: b is a protected attribute --> inaccessible
+    base.c = 300;   // Error: c is a private attribute --> inacessible
 
-    std::cout << std::endl;
+    Derived derived;
+    derived.a = 100;   // OK 
+    derived.b = 200;   // Error: b is protected
+    derived.c = 400;   // Error: c is private
 
-    Account *p_acc {nullptr};
-    p_acc = new Account();
-    p_acc->deposit(1000.0);
-    p_acc->withdraw(500.0);
-    delete p_acc;
-
-    // Use the Savings Account class
-    std::cout << "\n========Savings Account============================" << std::endl;
-    Savings_Account sav_acc{};
-    sav_acc.deposit(2000.0);
-    sav_acc.withdraw(500.0);
-
-    std::cout << std::endl;
-
-    Savings_Account *p_sav_acc {nullptr};
-    p_sav_acc = new Savings_Account();
-    p_sav_acc->deposit(1000.0);
-    p_sav_acc->withdraw(500.0);
-    delete p_sav_acc;
-
-    std::cout << std::endl;
+    return 0;
 }

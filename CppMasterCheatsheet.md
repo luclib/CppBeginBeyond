@@ -3578,3 +3578,150 @@ std::istream &operator>>(std::istream &is, Mystring &rhs){
 **Generalization**: combining similar classes inot a single, more general class based on common attributes.
 **Specialization**: creating new classes from existing classes that provide more specialized attributes or operations.
 **Inheritance** or **Class Hierarchy**: Organization of our inheritance relationships.
+
+### Inheritance vs Composition
+Both public inheritance and composition allow for the resuse of existing classes
+
+**Public Inheritance** is a form of "is-a" relationship whereby every class object is an modified instance of another class.
+* A student "is a" type of person.
+* A teacher "is a" type of person
+
+**Composition** is a form of a "has-a" relationship.
+* A student "has a" set of grades.
+* A teacher "has a" classroom.
+
+### Syntax of Inheritance
+```cpp
+class Base {
+  // Base class members ...
+};
+
+class Derived: access-specifier Base {
+  // Derived class members...
+}
+```
+
+Access-specifier can be: `public`, `private`, or `protected`.
+* If no access-specifier is provided, `private` is assigned by default.
+
+`public`:
+* Most common
+* Establishes 'is-a' relationship between Derived and Base classes
+
+`private` and `protected`
+* Establishes "derived class **has a** a base class" relationsip
+* "Is implemented in terms of" relationship
+* Different from composition.
+
+**Example**
+```cpp
+class Account {
+  // Account class members...
+};
+
+class Savings_Account: public Account {
+  // Savings_Account class members...
+};
+```
+
+Savings_Account **'is-a'** Account
+
+**Deriving classes from existing classes**
+```cpp
+// C++ creating objects
+
+Account account {};
+Account* p_account = new Account();
+
+account.deposit(1000.0);
+p_account->withdraw(200.0);
+
+delete p_account;
+```
+
+### Protected Members and Class Access
+The protected class member modifier
+```cpp
+class Base {
+  protected:
+    // protected Base class members...
+};
+```
+* Accessible from the Base class itself
+* Accessible from classes *derived* from Base
+* **Not** accessible by object of Base or Derived
+
+**Syntax**
+```cpp
+class Base{
+  public: 
+    int a;  // public Base class members . . .
+  protected:
+    int b;  // protected Base class members . . .
+  private:
+    int c;  // private Base class members . . .
+};
+```
+
+**Public inheritance**
+* all `public` members of base class can be accesed by derived class
+* all `protected` members of base class can be accessed by derived class
+* none of the `private` members of the base class can be accessed by derived class.
+
+**Protected inheritance**
+* all `public` members of base class become `protected` members in derived class
+* all `protected` members of base class remain `protected` by derived class
+* none of the `private` members of the base class can be accessed by derived class.
+
+**Private inheritance**
+* all `public` and `protected` of base class become `private` members in derived class
+* none of the `private` members of the base class can be accessed by derived class.
+
+
+**Example**: Base member access from Base objects
+```cpp
+#include <iostream>
+#include <Account.h>
+
+class Base {
+    // Note: friends of Base have access to all
+public:
+    int a {0};
+    void display() { std::cout << a << "," << b << ", " << c << std::endl;}  //member method has access to all
+protected:
+    int b {0};
+private:
+    int c {0};
+
+};
+
+int main() {
+    Base base;
+    base.a = 100;   // OK
+    base.b = 200;   // Error: b is a protected attribute --> inaccessible
+    base.c = 300;   // Error: c is a private attribute --> inacessible
+
+    return 0;
+}
+```
+**Example**: Base member access from Derived objects
+```cpp
+class Derived: public Base {
+    // Note: friends of Derived have access to only what Derived has access to
+public:
+    void access_base_members(){
+        a = 100;    // OK -> public in base, public in derived
+        b = 200;    // OK -> protected in base, protected in derived
+        c = 300;    // Error: not accessible.
+    }
+};
+
+int main() {
+    Derived derived;
+    derived.a = 100;   // OK 
+    derived.b = 200;   // Error: b is protected
+    derived.c = 400;   // Error: c is private
+
+    return 0;
+}
+```
