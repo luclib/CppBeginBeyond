@@ -3,38 +3,28 @@
 #include <Savings_Account.h>
 
 class Base {
-    // Note: friends of Base have access to all
-public:
-    int a {0};
-    void display() { std::cout << a << "," << b << ", " << c << std::endl;}  //member method has access to all
-protected:
-    int b {0};
 private:
-    int c {0};
-
+    int value;
+public:
+    Base(): value{0} {std::cout << "Base no-args constructor" << std::endl; }
+    Base(int x): value {x} { std::cout << "Base (int) overloaded constructor" << std::endl;}
+    ~Base() { std::cout << "Base destructor" << std::endl; }
 };
 
 class Derived: public Base {
-    // Note: friends of Derived have access to only what Derived has access to
+    using Base::Base;
+private:
+    int double_value;
 public:
-    void access_base_members(){
-        a = 100;    // OK -> public in base, public in derived
-        b = 200;    // OK -> protected in base, protected in derived
-        c = 300;    // Error: not accessible.
-    }
+    Derived(): double_value{0} { std::cout << "Derived constructor " << std::endl; }
+    Derived(int x): double_value{x * 2} { std::cout << "Derive (int) overloaded constructor" << std::endl;}
+    ~Derived() { std::cout << "Derived destructor" << std::endl; }
 };
 
 int main() {
-    std::cout << "===Base member access from base objects ============" << std::endl;
-    Base base;
-    base.a = 100;   // OK
-    base.b = 200;   // Error: b is a protected attribute --> inaccessible
-    base.c = 300;   // Error: c is a private attribute --> inacessible
-
-    Derived derived;
-    derived.a = 100;   // OK 
-    derived.b = 200;   // Error: b is protected
-    derived.c = 400;   // Error: c is private
-
+    // Base b;
+    // Base b {100};
+    // Derived d;
+    Derived d {40};
     return 0;
 }
