@@ -1182,6 +1182,29 @@ while (true) {
 
 ## Strings and Characters
 
+### Characters and Text
+The datatype  `char` is used to store individual characters (e.g. letters) to represetn text in a computer. Like integers, characters in C/C++ can be **unsigned** or **signed**, the only difference being that the former occupies 8 bits in memory while the latter occupies 7 bits.
+
+Each `char` corresponds maps to a character of the **ASCII table**. All of these mappings can be consulted [here](https://www.cs.cmu.edu/~pattis/15-1XX/common/handouts/ascii.html).
+
+In addition, it is possible to assign a valid ASCII code to a `char` variable and the corresponding character will be stored in that memory address. You can choose to interpret that either as a character or a regular integral value.
+
+
+```cpp
+  char value = 65;    // ASCII character code for 'A'
+  std::cout << "value : " << value << std::endl;
+  std::cout << "value(int) : " << static_cast<int>(value) << std::endl;
+  return 0;
+```
+
+```bash
+value : A
+value(int) : 65
+```
+
+**Note**: ASCII is limited to representing English and a few other western european languages. Other languages rely on different systems such as **Unicode**.
+
+
 ### Character Functions
 
 Character functions are located in the `<cctype>` namespace.
@@ -3670,11 +3693,11 @@ class Base{
 
 **Protected inheritance**
 * all `public` members of base class become `protected` members in derived class
-* all `protected` members of base class remain `protected` by derived class
+* all `protected` members of base class remain `protected` in derived class
 * none of the `private` members of the base class can be accessed by derived class.
 
 **Private inheritance**
-* all `public` and `protected` of base class become `private` members in derived class
+* all `public` and `protected` members of base class become `private` members in derived class
 * none of the `private` members of the base class can be accessed by derived class.
 
 
@@ -3725,3 +3748,192 @@ int main() {
     return 0;
 }
 ```
+
+### Constructors and Destructions
+**Constructors and Class Initialization**
+* A Derived class inherits from its Base class
+* The Base class part of the Derived class MUST be initialized BEFORE the Derived class is initialized
+* When a Derived object is created
+  * Base class constructor executes, then
+  * Derived class constructor executes
+
+**Destructors and Class Initialization**
+* Class destructors are invoked in the reverse order as constructors
+* The derived part of the Derived class MUST be destroyed BEFORE the Base class destructor is invoked
+* When a Derived object is destroyed
+  * Derived class destructor executes, then
+  * Base class destructor executes
+  * Each destructor shoul free resources allocated in its own constructors
+
+**Inheritance**
+* A derived class does NOT inherit:
+  * Base class constructors
+  * Base class destructor
+  * Base class overloaded assignment operators
+  * Base class friend functions
+
+* However, the derived class constructors, destructors, and overloaded assignment operators can invoke the base-class versions
+
+**Example**
+```cpp
+class Base {
+private:
+    int value;
+public:
+    Base(): value{0} {std::cout << "Base no-args constructor" << std::endl; }
+    Base(int x): value {x} { std::cout << "Base (int) overloaded constructor" << std::endl;}
+    ~Base() { std::cout << "Base destructor" << std::endl; }
+};
+
+class Derived: public Base {
+private:
+    int double_value;
+public:
+    Derived(): double_value{0} { std::cout << "Derived constructor " << std::endl; }
+    Derived(int x): double_value{x * 2} { std::cout << "Derive (int) overloaded constructor" << std::endl;}
+    ~Derived() { std::cout << "Derived destructor" << std::endl; }
+};
+
+int main() {
+    Derived d;  
+    Derived d {40};
+    return 0;
+}
+```
+**Note**: by default, calling on a derived constructor without specifying which base constructor to use will make the compiler call on the no-args constructor.
+```bash
+Base no-args constructor
+Derive (int) overloaded constructor
+Derived destructor
+Base destructor
+```
+
+**However**,  C++11 allows for inheritance of base 'non-special' constructors by placing **`using Base::Base`** anywhere in the derived class declaration. There are a lot of rules involved, though, so it is often better to define constructors yourself.
+```cpp
+class Derived: public Base {
+    using Base::Base;
+private:
+    int double_value;
+public:
+    Derived(): double_value{0} { std::cout << "Derived constructor " << std::endl; }
+    Derived(int x): double_value{x} { std::cout << "Derive (int) overloaded constructor" << std::endl;}
+    ~Derived() { std::cout << "Derived destructor" << std::endl; }
+};
+```
+
+### Passing Arguments to Base Class Constructors
+
+The Base part of the Derived class must be initialized first by passing arguments to its base class constructors.
+
+```txt
+class Base {
+  int value;
+public:
+  Base();     // No-args constructor
+  Base(int);  // Overloaded constructor
+};  
+
+class Derived: public Base {
+  Derived::Derived(int x)
+    : Base(x), { [optional initializers for Derived constructor] }
+};
+```
+
+**Example**
+```cpp
+class Base {
+private:
+    int value;
+public:
+    Base(): value{0} {std::cout << "Base no-args constructor" << std::endl; }
+    Base(int x): value {x} { std::cout << "Base (int) overloaded constructor" << std::endl;}
+    ~Base() { std::cout << "Base destructor" << std::endl; }
+};
+
+class Derived: public Base {
+private:
+    int double_value;
+public:
+    Derived()
+        : Base{}, double_value{0} { std::cout << "Derived constructor " << std::endl; }
+    Derived(int x)
+        :Base{x}, double_value{x * 2} { std::cout << "Derive (int) overloaded constructor" << std::endl;}
+    ~Derived() { std::cout << "Derived destructor" << std::endl; }
+};
+
+int main() {
+    Derived d;
+    Derived d2 {40};
+    return 0;
+}
+```
+
+```bash
+Base no-args constructor // Derived no-args construction
+Derived constructor 
+Base (int) overloaded constructor   // Derived overloaded construction
+Derive (int) overloaded constructor
+Derived destructor    // Derived no-args destruction
+Base destructor
+Derived destructor    // Derived overloaded destruction
+Base destructor
+```
+
+### Copy/Move Constructors and Overloaded Operators
+
+Copy/Move constructors and overloaded operators are **not** automatically inherited from the Base class.
+
+You may **not** be able to provide your own. In such a case, the compiler-provided version should suffice.
+
+*However*, we can explicitly invoke the Base class versions from the Derived class.
+
+
+**Copy Constructor**
+The copy constructor can invoke the Base copy constructor explictly and the Derived object 'other' will be **sliced**. In other words, we will remove the Destructor constructor to get at its Base object members.
+
+```txt
+Derived::Derived (const Derived &other)
+  : Base(other), {Derived initialization list} {
+  // code.
+}
+```
+
+**Example**: Base class
+```cpp
+// Copy Assignment
+Base(const Base &other)
+  :value{other.value} {
+    std::cout << "Base copy constructor" << std::endl; 
+}
+// Assignment overloading
+Base &operator=(const Base &rhs){
+  if(this != &rhs) {
+      value = rhs.value;
+  }
+  return *this;
+}
+```
+
+**Example**: Derived Class
+```cpp
+// Copy Assignment
+Derived(const Derived &other)
+    :Base(other), double_value {other.double_value}{
+      std::cout << "Derived copy constructor" << std::endl;
+}
+// Assignment overloarding
+Derived &operator=(const Derived &rhs){
+  if(this != &rhs){
+    Base::operator=(rhs);                   // Assign Base part
+    this->double_value = rhs.double_value;  // Assign Derived part
+  }
+  return *this;
+}
+```
+
+Copy/Move constructors and overloaded operator=
+* Often you do not need to provide your own
+* If you **DO NOT** define them in Derived, then the compiler will create them and automatically call the base class' version.
+* If you **DO** provide Derived versions thne **YOU** must invoke the Base versions **explicitly** yourself.
+
+>**Note**: be careful with raw pointers, especially if Base and Derived each have raw pointers, provide them with deep copy semantics.
