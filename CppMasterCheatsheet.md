@@ -71,6 +71,7 @@ int main(){
 ### Comments
 
 There are two kinds of comments in C/C++.
+
 ```cpp
 // This is a single line comment
 
@@ -92,6 +93,7 @@ There are two kinds of comments in C/C++.
 Keep style of the comments _consistent_ and do **not** comment the **obvious**.
 
 Multiline comments are often seen at the beginning of the code file to add relevant authorship information.
+
 ```cpp
 /************************************************
  * author information
@@ -111,6 +113,7 @@ Also, do **not** use comments for Version Control
 ```
 
 ### Main function
+
 Every C++ program must have *exactly* one main() function:
 
 - It is the starting point of the program execution
@@ -146,6 +149,7 @@ program.exe argument1 argument2
 If 0 is not returned, the operating system can check the value of the return value to determine what is wrong.
 
 ## Namespace
+
 Namespaces are used to reduce the possibility of naming conflicts.
 
 For example, `std` is the name for the C++ 'standard' namespace. Third party namespaces will have their own names.
@@ -167,17 +171,21 @@ using namespace std::endl;
 ## Basic Input and Output
 
 `cout`
+
 - standard output stream
 - prints output to the console
 
 `cin`
+
 - standard input stream
 - Used to take input from keyboard and stores it in a variable
 
 `<<`
+
 - insertion: takes program input and passes it to an output stream
 
 `>>`
+
 - extraction operator: takes data from an input stream and passes it a C/C++ program variable.
 
 ```cpp
@@ -197,6 +205,7 @@ int main() {
     return 0;
 }
 ```
+
 ```
 Enter a first integer: 100
 Enter a second integer:    200
@@ -214,6 +223,7 @@ Characters written from the keyboard are stored in an intermediate buffer. Once 
 > ```
 
 #### Downcasting numerical data
+
 If you enter a double value for an integer number, then the compiler will read the number in front of the decimal point and store that as the integer, thus losing accuracy on the value stored in the variable.
 
 Next, it will store the remainder, 0.5, as a double
@@ -235,6 +245,7 @@ Press any key to continue . . .
 If you enter a string instead of an integer, the input will immediately fail and enter into a fail state, returning 0.
 
 ## Variables and Constants
+
 ### Variable Initialization
 
 There are several ways to initialize variables in C++:
@@ -415,7 +426,7 @@ Types of constants:
   12LL - a long long integer
 - Character Literal Constants
   `\n` - newline
- ` \r` - return
+  ` \r` - return
   `\t` - tab
   `\b` - backspace
   `\\'` - single quote
@@ -485,6 +496,7 @@ int movie_rating [rows][columns];
 ```
 
 Accessing array elements in multi-dimensional arrays:
+
 ```cpp
 cin >> movie_rating [1][2]; // set element at row 1, column 2
 cout << movie_rating [1][2]; // display movie rating
@@ -525,6 +537,7 @@ vector <int> test_scores (10);
 Vectors are **12 bytes** in size.
 
 Initializing vectors:
+
 ```cpp
 vector <data_type> vector_name {init_list}; // option 1
 vector <data_type> vector_name (vector_size, init_value); // option 2
@@ -538,7 +551,9 @@ vector <double> hi_temperatures (365, 80.0); // vector of size 365 with elements
 ```
 
 #### Accessing vector elements
+
 **Method I** - array syntax: `vector_name [element_index]`
+
 ```cpp
 vector <int> test_scores {100, 95, 99, 87, 88};
 
@@ -558,6 +573,7 @@ Fifth score at index 4: 88
 ```
 
 **Method II** - vector syntax: `vector_name.at(element_index)`
+
 ```cpp
 vector <int> test_scores {100, 95, 99, 87, 88};
 
@@ -594,11 +610,13 @@ cin >> test_scores.at(5); // No index 5!
 ```
 
 Error message:
+
 ```text
 Exception thrown at 0x76A5E4B2 in main.exe: Microsoft C++ exception: std::out_of_range at memory location 0x00EFFB44.
 ```
 
 **Example of a 2D-vector**
+
 ```cpp
 vector<vector<int>> movie_ratings
 {
@@ -640,6 +658,7 @@ Here are the first movie ratings from each reviewer:
 ### Expressions
 
 An expression is:
+
 - the most basic building block of program
 - "a sequence of operators and operands that specifies a computation"
 - computes a value from a number of operands
@@ -658,6 +677,7 @@ a = b               // assignment
 ### Statements
 
 A statement is:
+
 - a complete line of code that performs some action
 - Usually terminated with a semicolon
 - Usually contains expressions
@@ -698,7 +718,9 @@ Common operators can be grouped as follows:
 > \* Assignment does **not** equal initialization, as it is done **_after_** a variable is initialized.
 
 #### Order of operations
+
 The order of operations in C/C++ follows the same general order as in Mathematics.
+
 1. **P**arentheses
 2. **E**xponents
 3. **M**ultiplication
@@ -707,13 +729,14 @@ The order of operations in C/C++ follows the same general order as in Mathematic
 6. **S**ubtraction
 
 ##### Arithmetic operators
-| operator | description |
-| :------- | :---------- |
-| `-` | addition
-| `*` |substraction
-| `-` | multiplication
-| `/ `| division
-| `% `| moduluo or remainder (works only with integers)
+
+| operator | description                                     |
+| :------- | :---------------------------------------------- |
+| `-`    | addition                                        |
+| `*`    | substraction                                    |
+| `-`    | multiplication                                  |
+| `/ `   | division                                        |
+| `% `   | moduluo or remainder (works only with integers) |
 
 `+`, `-`, `*` and `/` are overloaded to work with multiple data types such as int, double, etc.
 
@@ -1950,7 +1973,7 @@ variable_type *pointer_name;
 ```
 
 * Pointers are read from *right to left* (&larr;):
-* The asterisk (`*`) can be placed next to the pointer name or to the variable type (the former is preferred)
+* The asterisk (`*`) can be placed next to the pointer name or to the variable type (the former is more popular)
 
 ```cpp
 int *int_pt;        // int_ptr points to an integer
@@ -2931,7 +2954,7 @@ The **Move constructor** moves an object rather than copy it. It is optional but
 * Used by move constructor and move assignment operator to efficiently move an object rather than copy it.
 * R-value reference operator: **&&**
 
-> **NOTE**: An l-value reference is a reference that has an address to a variable with a name.
+An **l-value reference** is a reference that has an address to a variable with a name.
 
 **Example**: r-value references
 
@@ -3515,7 +3538,7 @@ ReturnType operatorOp(Type &obj);
 Declaration
 
 ```cpp
-friend Mystring foperator-(const Mystring &obj);
+friend Mystring operator-(const Mystring &obj);
 ```
 
 Defintion
