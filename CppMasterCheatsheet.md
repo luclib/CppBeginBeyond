@@ -3931,9 +3931,53 @@ Derived &operator=(const Derived &rhs){
 }
 ```
 
-Copy/Move constructors and overloaded operator=
+**Recap**: Copy/Move constructors and overloaded operator=
 * Often you do not need to provide your own
 * If you **DO NOT** define them in Derived, then the compiler will create them and automatically call the base class' version.
-* If you **DO** provide Derived versions thne **YOU** must invoke the Base versions **explicitly** yourself.
+* If you **DO** provide Derived versions then **YOU** must invoke the Base versions **explicitly** yourself.
 
 >**Note**: be careful with raw pointers, especially if Base and Derived each have raw pointers, provide them with deep copy semantics.
+
+### Redefining Base Class Methods
+Derived classes can directly invoke Base class methods or they can **override** and **redefine** Bae class methods.
+
+Simply provide a method in the derived class with the same name and signature as the method in the base class.
+
+**Example**
+```cpp
+class Account {
+  double balance;
+public:
+    void deposit(double amount) { balance += amount; }
+};
+
+class Savings_Account: public Account {
+  double int_rate;
+public:
+    void deposit(double amount){  // Redefine Base class method
+      amount += some_interest;
+      Account::deposit(amount); // invoke call Base class method
+    }
+};
+```
+
+**Static binding**: compiler determines which methods are called based on what it is given in compile time.
+* Default binding for C++
+* Derived class objects will use derived method
+* **However**, we can explicitly invoke base method from derived method as well
+* OK, but limited - much more powerful approach is dynamic binding.
+
+### Multiple Inheritance
+**Multiple Inheritance** occurs when a class inherits from two or more Base classes at the same time, wherein the Base classes may belong to unrelated class hierarchies.
+
+**C++ Syntax**
+```cpp
+class Derived:
+  public Base_Class_1, public Base_Class_2 {
+    . . .
+  }
+```
+
+>**Warning**: Multiple Inheritance is beyond the scope of this manual as it can be easily misused and it can become bery complex.
+> They are most common in class libraries and frameworks that you might be using.
+

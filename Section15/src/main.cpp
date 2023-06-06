@@ -2,64 +2,33 @@
 #include <Account.h>
 #include <Savings_Account.h>
 
-class Base {
-private:
-    int value;
-public:
-    Base(): value{0} {std::cout << "Base no-args constructor" << std::endl; }
-    Base(int x): value {x} { std::cout << "Base (int) overloaded constructor" << std::endl;}
-    Base(const Base &other)
-        :value{other.value} {
-            std::cout << "Base copy constructor" << std::endl; }
-    Base &operator=(const Base &rhs){
-        std::cout << "Base operator=" << std::endl;
-        if(this != &rhs) {
-            value = rhs.value;
-        }
-        return *this;
-    }
-    ~Base() { std::cout << "Base destructor" << std::endl; }
-
-    int display_value(){ return value; }
-    int* get_address() { return &value;}
-};
-
-class Derived: public Base {
-private:
-    int double_value;
-public:
-    Derived()
-        : Base{}, double_value{0} { std::cout << "Derived no-args constructor " << std::endl; }
-    Derived(int x)
-        :Base{x}, double_value{x * 2} { std::cout << "Derived (int) overloaded constructor" << std::endl;}
-    Derived(const Derived &other)
-        :Base(other), double_value {other.double_value}{
-            std::cout << "Derived copy constructor" << std::endl;
-    }
-    Derived &operator=(const Derived &rhs){
-        if(this != &rhs){
-            Base::operator=(rhs);                   // Assign Base part
-            this->double_value = rhs.double_value;  // Assign Derived part
-            std::cout << "Derived operator=" << std::endl;
-
-        }
-        return *this;
-    }
-    ~Derived() { std::cout << "Derived destructor" << std::endl; }
-};
-
 int main() {
-    // Base b {100};       // Overloaded constructor
-    // std::cout << "Address of b: " << b.get_address() << std::endl;
-    // std::cout << "Value of b: " << b.display_value() << std::endl;
-    // Base b1 {b};        // Copy constructor
-    // std::cout << "Address of b1: " << b1.get_address() << std::endl;
-    // std::cout << "Value of b1: " << b1.display_value() << std::endl;
-    // b = b1;             // Copy assignment
+    // std::cout << "\n======Account class=====================\n";
+    // Account acct1 {1000.0};
+    // std::cout << acct1 << std::endl;     // Account balance: 1000
 
-    Derived d {100};    // Overloaded constructor
-    Derived d1 {d};     // Copy constructor
-    d = d1;             // Copy assignment
+    // acct1.deposit(500.0);
+    // std::cout << acct1 << std::endl;    // Account balance: 1500
+
+    // acct1.withdraw(1000.0);               // Account balance: 500
+    // std::cout << acct1 << std::endl;
+
+    // acct1.withdraw(5000.0);             // Insufficient funds
+    // std::cout << acct1 << std::endl;    // Account balance: 500
+
+    std::cout << "\n======Savings account class=====================\n";
+    Savings_Account sav_acct {1000, 5.0};
+    std::cout << sav_acct << std::endl;   // Savings Account balance: 50, Interest Rate: 5
+    
+    sav_acct.deposit(1000);               // Savings Account balance: 2050, Interest rate: 5
+    std::cout << sav_acct << std::endl;
+
+    sav_acct.withdraw(2000);               // Savings Account balance: 50, Interest Rate: 5
+    std::cout << sav_acct << std::endl;
+
+    sav_acct.withdraw(1000);               // Insufficient funds.
+    std::cout << sav_acct << std::endl;
+
 
     return 0;
 }
