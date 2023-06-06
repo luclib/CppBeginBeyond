@@ -1,6 +1,7 @@
 # C++ Master Cheatsheet
 
 ## Table of Contents
+
 1. [Program Structure](#program-structure)
 2. [Namespace](#namespace)
 3. [Basic Input/Output](#basic-input-and-output)
@@ -48,31 +49,49 @@
     c. [Overloading Binary Operators as Member Methods](#overloading-binary-operators-as-member-methods--------etc)
     d. [Overloading operators using on-member or global functions](#overloading-operators-using-non-member-or-global-functions)
 
-
 ## Program structure
 
-**Preprocessor**: program that scans a `.cpp` file for preprocess directives, pulls the source code from the corresponding namespace(s), and loads it into the C++ file for the compiler to use.
+Every program in C/C++ begins with the **preprocessing** phase *prior* to compilation by the C/C++ compiler.
 
-**NOTE**: it does **not** understand C++ code. Instead it will scan the beggining of `.cpp` file looking for `#include` or `using` statements.
+A **preprocessor** is a program that scans a C/C++ file looking for **preprocess directives** that appear at the beginning of a code file. It then pulls the source code from the corresponding namespace(s) indicated by the preprocessor directives, and loads it into the C++ file for the compiler to use.
+
+**NOTE**: the preprocessor does **not** understand C++ code. Instead it will scan the beggining of a C/C++ file looking for `#include` or `using` statements.
+
+```cpp
+#include <iostream>   // preprocessor directive
+
+using namespace std;  // preprocessor directive
+
+// Start of C++ code
+int main(){
+
+}
+```
 
 ### Comments
 
-There are two kinds of comments.
-
+There are two kinds of comments in C/C++.
 ```cpp
-//single line comment
+// This is a single line comment
 
 /*
-    This is a multiple
-     line
-       comment
+    This is 
+    one version of
+    a multiline
+    comment
 */
+
+/**
+ * This is
+ * another version
+ * of the 
+ * multiline comment.
+ */
 ```
 
-Keep style of the comments _consistent_ and do **not** comment the _obvious_.
+Keep style of the comments _consistent_ and do **not** comment the **obvious**.
 
 Multiline comments are often seen at the beginning of the code file to add relevant authorship information.
-
 ```cpp
 /************************************************
  * author information
@@ -92,18 +111,18 @@ Also, do **not** use comments for Version Control
 ```
 
 ### Main function
-Every C++ program must have exactly one main() function
+Every C++ program must have *exactly* one main() function:
 
-- Starting point of program execution
-- return 0 indicates succesful program execution
-- 2 versions that are both valid
+- It is the starting point of the program execution
+- A `return 0` statement indicates a succesful program execution
+
+There are 2 versions of the `main` method that are valid.
 
 Version 1:
 
 ```cpp
 int main() {
     // code
-
     return 0;
 }
 
@@ -115,7 +134,6 @@ Version 2:
 ```cpp
 int main(int argc, char *argv[]){
     // code
-
     return 0;
 }
 
@@ -125,10 +143,9 @@ program.exe argument1 argument2
 - `argc` stands for _argument count_
 - `argv` stands for _argument vector_
 
-If 0 is not returned, the operasting system can check the value of the return value to determine what is wrong.
+If 0 is not returned, the operating system can check the value of the return value to determine what is wrong.
 
 ## Namespace
-
 Namespaces are used to reduce the possibility of naming conflicts.
 
 For example, `std` is the name for the C++ 'standard' namespace. Third party namespaces will have their own names.
@@ -150,23 +167,18 @@ using namespace std::endl;
 ## Basic Input and Output
 
 `cout`
-
 - standard output stream
-- console
+- prints output to the console
 
 `cin`
-
 - standard input stream
-- keyboard
+- Used to take input from keyboard and stores it in a variable
 
 `<<`
-
-- insertion
+- insertion: takes program input and passes it to an output stream
 
 `>>`
-
-- extraction operator
-- input streams
+- extraction operator: takes data from an input stream and passes it a C/C++ program variable.
 
 ```cpp
 int main() {
@@ -185,23 +197,24 @@ int main() {
     return 0;
 }
 ```
-
-Characters written from the keyboard and are stored in an intermediate buffer. Once the compiler reads that piece of input, it will store it in a variable, ignoring any _whitespace characters_ inserted before or after it.
-
 ```
 Enter a first integer: 100
 Enter a second integer:    200
 You entered 100, 200
 ```
 
-> **NOTE**: `cin` _cannot_ read more than one piece of input at at time.
+Characters written from the keyboard are stored in an intermediate buffer. Once the compiler reads that piece of input, it will store it in a variable, ignoring any _whitespace characters_ inserted before or after it.
+
+> **Warning**: `cin` _cannot_ read more than one piece of input at at time.
+>
 > Therefore, the following input will result in the first two inputs being stored in the separate `int` variables, thus skipping the second prompt entirely and executing the last code statement prior to `return 0`.
 >
 > ```
 > Enter a first integer: 100 200> Enter a second integer: You > entered 100, 200
 > ```
 
-If you enter a double for an integer number, then the compiler will read the number in front of the decimal point and store that as the integer, thus losing accuracy on the value stored in the variable.
+#### Downcasting numerical data
+If you enter a double value for an integer number, then the compiler will read the number in front of the decimal point and store that as the integer, thus losing accuracy on the value stored in the variable.
 
 Next, it will store the remainder, 0.5, as a double
 
@@ -222,7 +235,6 @@ Press any key to continue . . .
 If you enter a string instead of an integer, the input will immediately fail and enter into a fail state, returning 0.
 
 ## Variables and Constants
-
 ### Variable Initialization
 
 There are several ways to initialize variables in C++:
@@ -238,7 +250,7 @@ int age (21); // Constr. init.
 int age {21}; // init
 ```
 
-**NOTE**: It is recommended to use the C++11 list initializati syntax. Uninitialized variables in C++ can store _any kind_ of undesired value.
+**NOTE**: It is recommended to use the initialization syntax introduced with the C++11 standard. Uninitialized variables in C++ can store _any kind_ of undesired value.
 
 **Global Variables** are variables declared outside the scope of functions
 
@@ -267,7 +279,8 @@ Example:
 unsigned short int exam_score {55};
 cout << "My exam score was " << exam_score << endl;
 
-int countries_represented {65};d << " represented in my meeting." << endl;
+int countries_represented {65};
+cout << countries_represented + " represented in my meeting." << endl;
 
 long people_in_florida { 20'610'000};
 cout << "There are about " << people_in_florida << " people living in Florida." << endl;
@@ -328,9 +341,12 @@ sizeof operator gets its information from two C++ files:
 - `<climits>` provides information of integral types
 - `<cfloat>` provides information of floating point types
 
-We can use the values defined in `<climits>` to obtain the minimum value that can be stored for each data type.
+We can use the values defined in the `<climits>` namespace to obtain the minimum value that can be stored for each data type.
 
 ```cpp
+#include <climits>
+using namespace std;
+
 cout << "Minimum values: " << endl;
 cout << "=================" << endl;
 cout << "char:" << CHAR_MIN << endl;
@@ -398,13 +414,13 @@ Types of constants:
   12L - a long integer
   12LL - a long long integer
 - Character Literal Constants
-  \n - newline
-  \r - return
-  \t - tab
-  \b - backspace
-  \\' - single quote
-  \\" - double quote
-  \\\\ - backslash
+  `\n` - newline
+ ` \r` - return
+  `\t` - tab
+  `\b` - backspace
+  `\\'` - single quote
+  `\\"` - double quote
+  `\\\\`- backslash
 
   ```cpp
   cout << "Hello\tthere\nmy friend\n";
@@ -413,6 +429,7 @@ Types of constants:
   ```
   Hello   there
   my friend
+
   ```
 
 Declared constants are the most popular way of declaring constants. If you try to change the error of a constant, you get a compiler error.
@@ -421,14 +438,13 @@ Declared constants are the most popular way of declaring constants. If you try t
 
 ### Arrays
 
-**Arrays** are compound data types or data structures, that is, they are a collection of elements.
+**Arrays** are compound data types or data structures; that is, they are a collection of elements.
 
 - All elements are of the _same_ type
 - Each element can be accessed directly by their position or index
-- Stored contiguously in memory
-- Always initialize arrays
+- They are stored contiguously in memory
 
-The name of the array represents the location of the first element in the array (index o).
+The name of the array represents the location of the first element in the array (i.e. index o).
 
 The [`index`] represents the offset from the beginning of the array.
 
@@ -443,7 +459,7 @@ const int days_in_year {365};
 double hi_temperatures [days_in_year];
 ```
 
-**NOTE**: Best practice is to _always_ initialize arrays after declaring them.
+**NOTE**: Best practice is to _always_ **initialize arrays** after declaring them.
 
 Initialization: `Element_Type array_name [constant number of elements in array] {init list};`
 
@@ -468,8 +484,7 @@ const int columns {4};
 int movie_rating [rows][columns];
 ```
 
-Accessing array elements in multi-dimensional arrays
-
+Accessing array elements in multi-dimensional arrays:
 ```cpp
 cin >> movie_rating [1][2]; // set element at row 1, column 2
 cout << movie_rating [1][2]; // display movie rating
@@ -492,7 +507,7 @@ Vectors are compound structures (i.e. containers) for storing element collection
 
 - Part of the C++ Standard Template Library
 - An array that can grow and shrink in size at execution time.
-- Provides similar semantics and syntax as arrasy
+- Provides similar semantics and syntax as arrays
 - Very efficient
 - Can provide bounds checking
 - Can use lots of cool functions like sort, reverse, find, and more.
@@ -507,10 +522,9 @@ vector <char> vowels (5);
 vector <int> test_scores (10);
 ```
 
-Vectors are _12 bytes_ in size.
+Vectors are **12 bytes** in size.
 
 Initializing vectors:
-
 ```cpp
 vector <data_type> vector_name {init_list}; // option 1
 vector <data_type> vector_name (vector_size, init_value); // option 2
@@ -520,13 +534,11 @@ vector <data_type> vector_name (vector_size, init_value); // option 2
 vector <char> vowels {'a', 'e', 'i', 'o', 'u'};
 vector <int> test_scores {100, 98, 89, 85, 93};
 
-vector <double> hi_temperatures (365, 80.0); // vector of size 365 with elements initializaed to 80
+vector <double> hi_temperatures (365, 80.0); // vector of size 365 with elements initialized to 80
 ```
 
 #### Accessing vector elements
-
-Method I - array syntax: `vector_name [element_index]`
-
+**Method I** - array syntax: `vector_name [element_index]`
 ```cpp
 vector <int> test_scores {100, 95, 99, 87, 88};
 
@@ -545,8 +557,7 @@ Fourth score at index 3: 87
 Fifth score at index 4: 88
 ```
 
-Method II - vector syntax: `vector_name.at(element_index)`
-
+**Method II** - vector syntax: `vector_name.at(element_index)`
 ```cpp
 vector <int> test_scores {100, 95, 99, 87, 88};
 
@@ -568,7 +579,7 @@ test_scores.push_back(80);  // 100, 95, 99, 80
 test_scores.push_back(90);  // 100, 95, 99, 80, 90
 ```
 
-Vectors _automatically_ allocate the require space!
+**NOTE**: Vectors _automatically_ allocate the required space!
 
 What if you go out of bounds?
 
@@ -582,29 +593,29 @@ vector <int> test_scores {100, 95};
 cin >> test_scores.at(5); // No index 5!
 ```
 
+Error message:
 ```text
 Exception thrown at 0x76A5E4B2 in main.exe: Microsoft C++ exception: std::out_of_range at memory location 0x00EFFB44.
 ```
 
-Example of a 2D-vector
-
+**Example of a 2D-vector**
 ```cpp
-vector <vector<int>> movie_ratings
+vector<vector<int>> movie_ratings
 {
     {1,2,3,4},
     {1,2,4,4},
     {1,3,4,5}
 };
 
-// To retrieve the values from a 2D-vector, you need to use the at() method twice.
+// To retrieve the values from a 2D-vector in the same row, you need to use the at() method twice.
 cout << "\nHere are the movie ratings for review # 1 using vector syntax: " << endl;
 cout << movie_ratings.at(0).at(0) << endl;
 cout << movie_ratings.at(0).at(1) << endl;
 cout << movie_ratings.at(0).at(2) << endl;
 cout << movie_ratings.at(0).at(3) << endl;
 
-// To retrieve the values from a 2D-vector, you need to use the at() method twice.
-cout << "\nHere are the first movie ratings from each reviewer: " << endl;
+// To retrieve the values from a 2D-vector in the same column, you also need to use the at() method twice.
+cout << "\nHere are the rating for the first movie from each reviewer: " << endl;
 cout << movie_ratings.at(0).at(0) << endl;
 cout << movie_ratings.at(1).at(0) << endl;
 cout << movie_ratings.at(2).at(0) << endl;
@@ -629,12 +640,11 @@ Here are the first movie ratings from each reviewer:
 ### Expressions
 
 An expression is:
-
 - the most basic building block of program
 - "a sequence of operators and operands that specifies a computation"
 - computes a value from a number of operands
 
-Expression - example
+**Expression Example**
 
 ```cpp
 34                  // literal
@@ -648,14 +658,13 @@ a = b               // assignment
 ### Statements
 
 A statement is:
-
 - a complete line of code that performs some action
 - Usually terminated with a semicolon
 - Usually contains expressions
 
 C++ has many different types of statements: expression, null, compound, selection, iteration, declaration, jump, try blocks, and others.
 
-Statements - examples
+**Statement Examples**
 
 ```cpp
 int x;                                    // declaration
@@ -674,9 +683,9 @@ C++ has a rich set of operators
 
 - _unary_: operates on only one operand (e.g. negator `!`)
 - _binary_: operates on two operands (e.g. multiplier `*`)
-- _ternary_: (e.g. increment `++`)
+- _ternary_: operates on three operands (e.g. `++`)
 
-Common operators can be groupex as follows:
+Common operators can be grouped as follows:
 
 - _assignment_: modifies value of object
 - _arithmetic_: perform mathematical operations on operands
@@ -686,14 +695,10 @@ Common operators can be groupex as follows:
 - _member access_: allows access to object properties (e.g. array subscript notation)
 - _other_: do not fit any of the previous operators
 
-> \* Assignment does **not** equal initialization, as it is done _after_ a variable is initialized.
+> \* Assignment does **not** equal initialization, as it is done **_after_** a variable is initialized.
 
 #### Order of operations
-  \\\\ - backslash
-
-  ```cpp
-  cout << "Hello\tthere\nmy friend\n";
-  ```
+The order of operations in C/C++ follows the same general order as in Mathematics.
 1. **P**arentheses
 2. **E**xponents
 3. **M**ultiplication
@@ -702,19 +707,15 @@ Common operators can be groupex as follows:
 6. **S**ubtraction
 
 ##### Arithmetic operators
-
 | operator | description |
 | :------- | :---------- |
+| `-` | addition
+| `*` |substraction
+| `-` | multiplication
+| `/ `| division
+| `% `| moduluo or remainder (works only with integers)
 
-- | addition
-
-* |substraction
-
-- | multiplication
-  / | division
-  % | moduluo or remainder (works only with integers)
-
-+, -, \* and / are overloaded to work with multipole types such as int, double, etc.
+`+`, `-`, `*` and `/` are overloaded to work with multiple data types such as int, double, etc.
 
 Operators can also be combined with the assignment operator to create ternary operators
 
@@ -740,7 +741,7 @@ There are two notations
 1. Prefix : `++num`
 2. Postfix: `num++`
 
-###### Example 1
+**Example 1**
 
 ```cpp
 int counter {10};
@@ -774,7 +775,7 @@ After incrementation
 Result: 10
 ```
 
-###### Example 2
+**Example 2**
 
 ```cpp
     int counter {10};
@@ -914,7 +915,7 @@ Comparison result (not equals): 0
 | :----------------------------------------- | :------------- |
 | `<ul><li>``!</li>``<li>not``</li></ul>`  | negation       |
 | `<ul><li>``&&</li>``<li>and``</li></ul>` | logical*and* |
-| `<ul><li>``&&</li>``<li>and``</li></ul>` | logical *or*        |
+| `<ul><li>``&&</li>``<li>and``</li></ul>` | logical*or*  |
 
 > **NOTE**: Extremely rare for people to use the logical word operands (`and`, `or`, or `not`).
 
@@ -1182,29 +1183,6 @@ while (true) {
 
 ## Strings and Characters
 
-### Characters and Text
-The datatype  `char` is used to store individual characters (e.g. letters) to represetn text in a computer. Like integers, characters in C/C++ can be **unsigned** or **signed**, the only difference being that the former occupies 8 bits in memory while the latter occupies 7 bits.
-
-Each `char` corresponds maps to a character of the **ASCII table**. All of these mappings can be consulted [here](https://www.cs.cmu.edu/~pattis/15-1XX/common/handouts/ascii.html).
-
-In addition, it is possible to assign a valid ASCII code to a `char` variable and the corresponding character will be stored in that memory address. You can choose to interpret that either as a character or a regular integral value.
-
-
-```cpp
-  char value = 65;    // ASCII character code for 'A'
-  std::cout << "value : " << value << std::endl;
-  std::cout << "value(int) : " << static_cast<int>(value) << std::endl;
-  return 0;
-```
-
-```bash
-value : A
-value(int) : 65
-```
-
-**Note**: ASCII is limited to representing English and a few other western european languages. Other languages rely on different systems such as **Unicode**.
-
-
 ### Character Functions
 
 Character functions are located in the `<cctype>` namespace.
@@ -1245,10 +1223,11 @@ They include:
 A **C-style string** is a sequence of characters, contigous in memory, that is implemented as an array of characters.
   \\\\ - backslash
 
-  ```cpp
+```cpp
   cout << "Hello\tthere\nmy friend\n";
-  ```
-  - null - character with a value of zero (represented by `\0` in memory)
+```
+
+- null - character with a value of zero (represented by `\0` in memory)
 - Referred to as zero or null terminated string
   - This implies that the compiler will allocate _an extra space_ in memory for the null character
 
@@ -1876,6 +1855,7 @@ int main() {
 ```
 
 Process in memory:
+
 ```txt
 main:
   push space for the return value
@@ -1896,6 +1876,7 @@ main:
 ```
 
 #### Inline Functions
+
 Since functions can have a certain amount of overhead that may lead to stack overflows, we can suggest the compiler to compile the *simpler* functions **inline**.
 
 **Inline functions** are faster functions that avoid function call overhead, and generate inline assembly code. However, overuse of inline functions can cause the cause bloats in your source code.
@@ -2963,37 +2944,37 @@ The **Move constructor** moves an object rather than copy it. It is optional but
   r_ref = 300;        // change r_ref to 300
 
   int &&x_ref = x;    // compiler error: cannot assign r-value ref to l-value ref
-  ```
+```
 
 **Example**: l-value reference parameters
 
-  ```cpp
+```cpp
   int x {100};         // x is an l-value
 
   void func(int &num); // A
 
   func(x);      // calls A - x is an l-value  
   func(200);    // Error - 200 is an r-value
-  ```
+```
 
   The above error is caused because the compiler cannot bind non-const l-value refrence of type 'int&' to an rvalue of type 'int'.
 
   **Example**: r-value reference parameters
 
-  ```cpp
+```cpp
   int x {100};         // x is an l-value
 
   void func(int &&num); // A
 
   func(200);      // calls A - x is an r-value  
   func(x);    // Error - 200 is an l-value
-  ```
+```
 
   The above error is caused because the compiler cannot bind r-value reference of type 'int&&' to an l-value reference of type 'int'.
 
   **Example**: l-value and r-value reference parameters
 
-  ```cpp
+```cpp
     int x {100};         // x is an l-value
 
     void func(int &num); // A
@@ -3018,10 +2999,12 @@ The **Move constructor** moves an object rather than copy it. It is optional but
   vec.push_back(Move{10}); // 1
   vec.push_back(Move{20}); // 2
 ```
+
 **Process**:
-1. Vector `vec` is given an r-value reference of type `Move`. 
-However, because it can only store l-value references, the compiler creates a temporary object out of `Move{10}` and then uses it to construct a deep copy (i.e. an **l-value** reference) of `Move{10}` to store in thearray.
-Once the deep copy is made, the compiler will call the destructor to free data from the temporary object.
+
+1. Vector `vec` is given an r-value reference of type `Move`.
+   However, because it can only store l-value references, the compiler creates a temporary object out of `Move{10}` and then uses it to construct a deep copy (i.e. an **l-value** reference) of `Move{10}` to store in thearray.
+   Once the deep copy is made, the compiler will call the destructor to free data from the temporary object.
 2. As the vector grows, objects need to be copied to the new storage creating many copies behind the scenes.
 
 The compiler uses the move constructor to make copies of Move{10} and Move{20}, thus creating temporary values for each and repeatedly using deep copying more than once.
@@ -3042,7 +3025,6 @@ The compiler uses the move constructor to make copies of Move{10} and Move{20}, 
 Instead of making a deep copy of the move constructor, move copying actually *moves* the resource by copying the address of the resource from source to the current object *and* nulls out the pointer in the source pointer.
 
 #### Efficient copying
-
 
 Original object owns data in the heap while the copied object holds a pointer to the data of the original object.
 
@@ -3065,8 +3047,8 @@ Move::Move(Move &&source);
   Move(Move &&source);        // Move Constructor
 ```
 
-
 Move constructor definition
+
 ```cpp
   Move(Move &&source) noexcept
       :data {source.data}{
@@ -3074,13 +3056,15 @@ Move constructor definition
           std::cout << "Move constructor -moving resource: " << std::endl;
   }
 ```
+
 Example
+
 ```cpp
   int main () { 
     std::vector<Move> vec;
     vec.push_back(Move{10});
     vec.push_back(Move{20});
-    
+  
     return 0;
   }
 ```
@@ -3097,10 +3081,13 @@ Example
   Destructor freeing data for: 10
   Destructor freeing data for: 20
 ```
+
 Here we are 'stealing' the data and then nulling out the source pointer; as a result, there is no deep copying being done.
 
 ### The `this` pointer
+
 **`this`** is a reserved keyword that contains the address of the object. Therefore, it's a *pointer* to the object that can **only** be accessed from inside the class scope.
+
 * It grants access to **all** class members and methods
 * Determines whether two objects are the same
 * Can be derefrenced (`*this`) to yield the current object.
@@ -3108,6 +3095,7 @@ Here we are 'stealing' the data and then nulling out the source pointer; as a re
 **NOTE**: other languages will use the keyword `self` instead.
 
 **Example**: `this` pointer
+
 ```cpp
 void Account::set_balance(double bal){
   balance = bal;  // this->balance is implied
@@ -3115,6 +3103,7 @@ void Account::set_balance(double bal){
 ```
 
 `this` is very useful for disambiguating identifier use
+
 ```cpp
 void Account::set_balance(double balance){
   this->balance = balance; // Unambiguous
@@ -3122,6 +3111,7 @@ void Account::set_balance(double balance){
 ```
 
 ### Using `const` with Classes
+
 We can pass arguments to class member methods as `const` so that they cannot be modified by the function.
 
 We can also create `const` objects; however, passing them to methods that do not expect a `const`-type argument in their method prototype will result in compilation errors.
@@ -3131,9 +3121,11 @@ const Player villain {"Villain", 100, 55};
 villain.set_name{"Nice guy"};                   // ERROR
 std::cout << villain.get_name() << std::endl;   // ERROR
 ```
+
 In the case of the `cout` function, the compiler assumes that `get_name()` could potentially modify the object.
 
 When we call member methods on a const object, again we get a compiler error if that method contains a call to `get_name()`.
+
 ```cpp
 const Player villain {"Villain", 100, 55};
 
@@ -3157,6 +3149,7 @@ const Player villain {"Villain", 100, 55};
 ```
 
 const-correctness
+
 ```cpp
   const Player villain {"Villain", 100, 55};
   villain.set_name("Nice guy");                 // ERROR
@@ -3166,11 +3159,13 @@ const-correctness
 **Takeaway**: any method that does *not* modify your object should be set as a `const` method.
 
 ### Static Class Members (Functions)
+
 **Static Class Members** are members that belong to the class and *not* the objects. They most useful for storing class-wide information.
 
 **Static Class Functions** are functions that are independent of any objects and can be called using the class name.
 
 **Example**: Storing the total number of players in game using static members.
+
 1. Prepend the `static` modifier in front of the members and/or functions.
 
 player.h
@@ -3187,7 +3182,7 @@ public:
 ```
 
 2. For static methods, define the method implementation in the class file *without* including the `static` modifier.
-  For static members, initiliaze the starting value of the member.
+   For static members, initiliaze the starting value of the member.
 
 player.cpp
 
@@ -3201,9 +3196,11 @@ int Player::get_num_players(){
 }
 ...
 ```
+
 3. In case of *global variable counters*, increment and decrement the value of the static member in the constructor and destructor, respectively.
 
 player.cpp
+
 ```cpp
 Player::Player(std::string name_val, int health_val, int xp_val)
     : name {name_val}, health {health_val}, xp {xp_val} { 
@@ -3214,9 +3211,11 @@ Player::~Player(){
     --num_players;
 }
 ```
+
 4. (Optional) Create a method in your main file that implements the static method.
 
 main.cpp
+
 ```cpp
 #include <iostream>
 #include "player.h"
@@ -3227,23 +3226,26 @@ void display_active_players() {
         << std::endl;
 }
 ```
+
 ## Operator Overloading
 
 **Operator Overloading** consists of using traditional operators such as +, =, *, etc. with *user-defined* types. In other words, it allows us to use modifying familiar operators in such a way that we can intuitively use them for own classes so that they beahve similar to built-in types.
+
 * Can make code more readable and writable
 * Not done automatically (except for the assignment operator). They must be *explicitely* defined.
 
 The majority of C++'s operators can be overloaded **except**:
-| operator |
-| :-------|
-| `::` |
-| `:?`|
-| `.` |
-| `sizeof`|
+
+| operator   |
+| :--------- |
+| `::`     |
+| `:?`     |
+| `.`      |
+| `sizeof` |
 
 **Rules for Overloading Operators**
-* Precedence and Associativity cannot be chnaged
 
+* Precedence and Associativity cannot be chnaged
 * 'arity' cannot be changed (i.e. you can't make the division operator unary)
 * Cannot overload operators for primitive type (e.g. `int`, `double`, `etc.`)
 * Cannot create new opeartors
@@ -3251,7 +3253,9 @@ The majority of C++'s operators can be overloaded **except**:
 * Other operators can be declared as member methods or global functions
 
 ### Copy assignment operator (=)
+
 C++ provides a default assignment operator used for assigning one object to another.
+
 * This is **NOT** the same as using initialization operator `{}` followed by `=` to produce a Shallow copy.
 
 ```cpp
@@ -3260,9 +3264,11 @@ Mystring s2 = s1;     // NOT assignment => same as Mystring s2 {s1};
 
 s2 = s1;    // Assignment, s2 has not been previously initialized.
 ```
+
 Since we are dealing with raw pointers as data members, we need to overload the assignment operator to use *deep copying* instead.
 
 **Process**
+
 1. In the method declaration, use keyword `operator` follower by the symbol of the operator that you want to choose.
 2. If one of the data member is a *raw pointer*, then use a reference to the data object (i.e. **deep copying**) for the method implementation.
 
@@ -3271,18 +3277,22 @@ Since we are dealing with raw pointers as data members, we need to overload the 
 ```cpp
 Type &Type::operator=(const Type &rhs);
 ```
+
 For the Mystring class:
+
 ```cpp
 Mystring &Mystring::operator=(const Mystring &rhs);
 ```
+
 From now on, when we write `s2 = s1`, we will be actually calling our overloaded operator method `s2.operator=(s1)`.
 
 Method definition
+
 ```cpp
 Mystring &Mystring::operator=(const Mystring &rhs){
     if (this == &rhs)
         return *this;
-    
+  
     delete [] str;
     str = new char[std::strlen(rhs.str) + 1];
     std::strcpy(str, rhs.str);
@@ -3290,42 +3300,56 @@ Mystring &Mystring::operator=(const Mystring &rhs){
     return *this;
 }
 ```
+
 **Breakdown**
+
 * Check for self assignment, return current object if the rhs object is the same.
+
 ```cpp
   if (this == &rhs)
       return *this;
 ```
+
 * Deallocate storage for `this->str` since were are overwriting it.
+
 ```cpp
   delete [] str;
 ```
+
 * Allocate storage for the deep copy.
+
 ```cpp
   str = new char[std::strlen(rhs.str) + 1];
 ```
+
 * Perform the copy
+
 ```cpp
   std::strcpy(str, rhs.str)
 ```
+
 * Return the current object by reference to allow chain assignment.
+
 ```cpp
   return *this;
 ```
 
-
 ### Move assignment operator (=)
 
 Template
+
 ```cpp
 Type &Type::operator=(Type &&rhs);
 ```
+
 Method declaration
+
 ```cpp
 Mystring &Mystring::operator=(My string &&rhs);
 ```
 
 Method definition
+
 ```cpp
 Mystring &Mystring::operator=(My string &&rhs){
   if (this == &rhs)
@@ -3337,36 +3361,50 @@ Mystring &Mystring::operator=(My string &&rhs){
   return *this;
 }
 ```
+
 **Breakdown**
+
 * Check for self assignment, return current object if the rhs object is the same.
+
 ```cpp
   if (this == &rhs)
       return *this;
 ```
+
 * Deallocate storage for `this->str` since were are overwriting it.
+
 ```cpp
   delete [] str;
 ```
+
 * Steal the pointer from the rhs object nand assign it to `this->str`
+
 ```cpp
   str = rhs.str;
 ```
+
 * Null out the rhs pointer
+
 ```cpp
   rhs.str = nullptr;
 ```
+
 * Return the current object by reference to allow chain assignment.
+
 ```cpp
   return *this;
 ```
 
 ### Overloading unary operators as member methods (++, --, -, !)
+
 Template
+
 ```cpp
 Return Type Type::operatorOp();
 ```
 
 Method declarations
+
 ```cpp
 Number Number::operator-() const;
 Number Number::operator++();      // pre-increment 
@@ -3375,6 +3413,7 @@ bool Number::operator!() const;
 ```
 
 **Example**: Mystring `operator-` to make lowercase
+
 ```cpp
 Mystring dude1 {"JOHN"};
 Mystring dude2;
@@ -3388,6 +3427,7 @@ dude2.display(); // john
 ```
 
 Method defintion
+
 ```cpp
 Mystring Mystring::operator-() const {
   char *buff = new char[std::strleng(str) + 1];
@@ -3401,7 +3441,9 @@ Mystring Mystring::operator-() const {
 ```
 
 ### Overloading binary operators as member methods (+, -, ==, !=, <, >, etc.)
+
 Declaration
+
 ```cpp
 Number Number::operator+(const Number &rhs) const;
 Number Number::operator-(const Number &rhs) const;   // pre-increment 
@@ -3417,6 +3459,7 @@ if (n1 == n2) . . .         // n1.operator==(n2)
 **Example**: Mystring `operator==` (equality)
 
 Goal: compare the string contents of the pointers rather than their memory addresses.
+
 ```cpp
 bool Mystring::operator==(const Mystring &rhs) const {
   if(std::strcmp(str, rhs.str) == 0)
@@ -3427,6 +3470,7 @@ bool Mystring::operator==(const Mystring &rhs) const {
 ```
 
 **Example**: Mystring `operator+` (concatenation)
+
 ```cpp
 My string larry {"Larry"};
 Mystring moe {"Moe"};
@@ -3438,7 +3482,9 @@ result = moe + " is also a stooge";
     // moe.operator+("is also a stooge");
 result = "Moe" + stooges; // "Moe".operator+(stooges) --> ERROR
 ```
+
 Definition
+
 ```cpp
 Mystring Mystring::operator+(const Mystring &rhs) const {
   size_t buff_size = std::strlen(str) +
@@ -3451,12 +3497,15 @@ Mystring Mystring::operator+(const Mystring &rhs) const {
   return temp;
 }
 ```
+
 ### Overloading operators using non-member or global functions
+
 Since we cannot use a `this` pointer to refer to lhs when dealing with global or non-member functions,such functions are often declared as **`friend`** functions.
 
 #### Unary operators
 
 Template
+
 ```cpp
 ReturnType operatorOp(Type &obj);
 ```
@@ -3464,10 +3513,13 @@ ReturnType operatorOp(Type &obj);
 **Example**: convert a string to lower case:
 
 Declaration
+
 ```cpp
 friend Mystring foperator-(const Mystring &obj);
 ```
+
 Defintion
+
 ```cpp
 Mystring operator-(const Mystring &obj) {
   char *buff = new char[std::strleng(obj.str) + 1];
@@ -3479,21 +3531,27 @@ Mystring operator-(const Mystring &obj) {
   return temp;
 }
 ```
+
 **Warning**: You cannot have both a member and non-member version of the method in your code; otherwise, the compiler would not know which one to use.
 
 #### Binary operators
+
 Template
+
 ```cpp
 ReturnType operatorOp(const Type &lhs, const Type &obj);
 ```
 
 Declaration
+
 ```cpp
 friend Mystring operator==(const Mystring &obj);
 ```
+
 **Example:** `operator==`
 
 Definition
+
 ```cpp
 bool operator=(const Mystring &lhs, const Mystring &rhs){
   if(std:strcmp(lhs.str, rhs.str) == 0)
@@ -3502,12 +3560,13 @@ bool operator=(const Mystring &lhs, const Mystring &rhs){
     return false;
 }
 ```
+
 * If declared as a friend of `Mystring`, the method can access private `str` attribute
 * Otherwise, we need getter methods.
 
-
 **Example:** `operator+` (concatenation)
 Definition
+
 ```cpp
 Mystring operator+(const Mystring &lhs, const Mystring &rhs) const {
     size_t buff_size = std::strlen(lhs.str) +
@@ -3520,7 +3579,9 @@ Mystring operator+(const Mystring &lhs, const Mystring &rhs) const {
     return temp;
 }
 ```
+
 Implementation
+
 ```cpp
 Mystring larry {"Larry"};
 Mystring moe {"Moe"};
@@ -3534,9 +3595,11 @@ result = moe + " is also a stooge";
 
 result = "Moe " + stooges;  // OK with non-member functions
 ```
+
 * **Note**: Because it is a non-member function, the lhs does not have to be an object of the class type. Either one or both arguments can be of mystring type.
 
 #### Overloading stream insertion (<<) and extraction (>>) operators
+
 The insertion and extraction operators (`<<`, `>>`) allows us to insert and extract our class instances to and from streams, respectively.
 
 ```cpp
@@ -3553,15 +3616,18 @@ It makes no sense to implement stream insertion and extraction operators as memb
 The left operand must be a user-defined class, which is is not the case with member methods.
 
 Declarations
+
 ```cpp
 // Insertion
 friend std::istream &operator<<(std::istream &is, Mystring &rhs);
 // Extraction
 friend std::ostream &operator>>(const std::ostream &os, const Mystring &rhs);
 ```
+
 * **Note**: the insertion operator does not have its parameters set to `const` as we intend to modify the final `istream` object.
 
 **stream insertion operator (<<)**
+
 ```cpp
 std::ostream &operator<<(std::ostream &os, const Mystring &obj) {
   os << obj.str;  // if friend function
@@ -3569,10 +3635,12 @@ std::ostream &operator<<(std::ostream &os, const Mystring &obj) {
   return os;
 }
 ```
+
 * Return a reference to the `ostream` so we can keep inserting values into it.
 * Do **not** return `ostream` by value!
 
 **stream extraction operator (>>)**
+
 ```cpp
 std::istream &operator>>(std::istream &is, Mystring &rhs){
   char *buff = new char[1000];
@@ -3584,16 +3652,21 @@ std::istream &operator>>(std::istream &is, Mystring &rhs){
 ```
 
 ## Inheritance
+
 ### What is inheritance?
+
 **Inheritance** is a process of creating new classes from existing classes whereby a new class contains the data and behaviors of the existing class and a new class' behaviors can be *modified* without modifying that of its existing class.
+
 * **Single Inheritance**: new class is created form another 'single' class
 * **Multiple Inheritance**: new class is created from two (or more) other classes.
 
 ### Terminology and Notation
+
 **Base class** (parent class, super class): the class being extended or inherited from.
 **Derived class** (child class, sub class): class being created from the Base class; it will inherit attributes and operations from Base class
 
 **Is-A** relationship:
+
 * Public inheritance
 * Derived classes are sub-types of their Base classes
 * Can use a derived class object wherever we use a base class object
@@ -3603,17 +3676,21 @@ std::istream &operator>>(std::istream &is, Mystring &rhs){
 **Inheritance** or **Class Hierarchy**: Organization of our inheritance relationships.
 
 ### Inheritance vs Composition
+
 Both public inheritance and composition allow for the resuse of existing classes
 
 **Public Inheritance** is a form of "is-a" relationship whereby every class object is an modified instance of another class.
+
 * A student "is a" type of person.
 * A teacher "is a" type of person
 
 **Composition** is a form of a "has-a" relationship.
+
 * A student "has a" set of grades.
 * A teacher "has a" classroom.
 
 ### Syntax of Inheritance
+
 ```cpp
 class Base {
   // Base class members ...
@@ -3625,18 +3702,22 @@ class Derived: access-specifier Base {
 ```
 
 Access-specifier can be: `public`, `private`, or `protected`.
+
 * If no access-specifier is provided, `private` is assigned by default.
 
 `public`:
+
 * Most common
 * Establishes 'is-a' relationship between Derived and Base classes
 
 `private` and `protected`
+
 * Establishes "derived class **has a** a base class" relationsip
 * "Is implemented in terms of" relationship
 * Different from composition.
 
 **Example**
+
 ```cpp
 class Account {
   // Account class members...
@@ -3650,6 +3731,7 @@ class Savings_Account: public Account {
 Savings_Account **'is-a'** Account
 
 **Deriving classes from existing classes**
+
 ```cpp
 // C++ creating objects
 
@@ -3663,18 +3745,22 @@ delete p_account;
 ```
 
 ### Protected Members and Class Access
+
 The protected class member modifier
+
 ```cpp
 class Base {
   protected:
     // protected Base class members...
 };
 ```
+
 * Accessible from the Base class itself
 * Accessible from classes *derived* from Base
 * **Not** accessible by object of Base or Derived
 
 **Syntax**
+
 ```cpp
 class Base{
   public: 
@@ -3687,21 +3773,24 @@ class Base{
 ```
 
 **Public inheritance**
+
 * all `public` members of base class can be accesed by derived class
 * all `protected` members of base class can be accessed by derived class
 * none of the `private` members of the base class can be accessed by derived class.
 
 **Protected inheritance**
+
 * all `public` members of base class become `protected` members in derived class
-* all `protected` members of base class remain `protected` in derived class
+* all `protected` members of base class remain `protected` by derived class
 * none of the `private` members of the base class can be accessed by derived class.
 
 **Private inheritance**
-* all `public` and `protected` members of base class become `private` members in derived class
+
+* all `public` and `protected` of base class become `private` members in derived class
 * none of the `private` members of the base class can be accessed by derived class.
 
-
 **Example**: Base member access from Base objects
+
 ```cpp
 #include <iostream>
 #include <Account.h>
@@ -3727,7 +3816,9 @@ int main() {
     return 0;
 }
 ```
+
 **Example**: Base member access from Derived objects
+
 ```cpp
 class Derived: public Base {
     // Note: friends of Derived have access to only what Derived has access to
@@ -3748,192 +3839,3 @@ int main() {
     return 0;
 }
 ```
-
-### Constructors and Destructions
-**Constructors and Class Initialization**
-* A Derived class inherits from its Base class
-* The Base class part of the Derived class MUST be initialized BEFORE the Derived class is initialized
-* When a Derived object is created
-  * Base class constructor executes, then
-  * Derived class constructor executes
-
-**Destructors and Class Initialization**
-* Class destructors are invoked in the reverse order as constructors
-* The derived part of the Derived class MUST be destroyed BEFORE the Base class destructor is invoked
-* When a Derived object is destroyed
-  * Derived class destructor executes, then
-  * Base class destructor executes
-  * Each destructor shoul free resources allocated in its own constructors
-
-**Inheritance**
-* A derived class does NOT inherit:
-  * Base class constructors
-  * Base class destructor
-  * Base class overloaded assignment operators
-  * Base class friend functions
-
-* However, the derived class constructors, destructors, and overloaded assignment operators can invoke the base-class versions
-
-**Example**
-```cpp
-class Base {
-private:
-    int value;
-public:
-    Base(): value{0} {std::cout << "Base no-args constructor" << std::endl; }
-    Base(int x): value {x} { std::cout << "Base (int) overloaded constructor" << std::endl;}
-    ~Base() { std::cout << "Base destructor" << std::endl; }
-};
-
-class Derived: public Base {
-private:
-    int double_value;
-public:
-    Derived(): double_value{0} { std::cout << "Derived constructor " << std::endl; }
-    Derived(int x): double_value{x * 2} { std::cout << "Derive (int) overloaded constructor" << std::endl;}
-    ~Derived() { std::cout << "Derived destructor" << std::endl; }
-};
-
-int main() {
-    Derived d;  
-    Derived d {40};
-    return 0;
-}
-```
-**Note**: by default, calling on a derived constructor without specifying which base constructor to use will make the compiler call on the no-args constructor.
-```bash
-Base no-args constructor
-Derive (int) overloaded constructor
-Derived destructor
-Base destructor
-```
-
-**However**,  C++11 allows for inheritance of base 'non-special' constructors by placing **`using Base::Base`** anywhere in the derived class declaration. There are a lot of rules involved, though, so it is often better to define constructors yourself.
-```cpp
-class Derived: public Base {
-    using Base::Base;
-private:
-    int double_value;
-public:
-    Derived(): double_value{0} { std::cout << "Derived constructor " << std::endl; }
-    Derived(int x): double_value{x} { std::cout << "Derive (int) overloaded constructor" << std::endl;}
-    ~Derived() { std::cout << "Derived destructor" << std::endl; }
-};
-```
-
-### Passing Arguments to Base Class Constructors
-
-The Base part of the Derived class must be initialized first by passing arguments to its base class constructors.
-
-```txt
-class Base {
-  int value;
-public:
-  Base();     // No-args constructor
-  Base(int);  // Overloaded constructor
-};  
-
-class Derived: public Base {
-  Derived::Derived(int x)
-    : Base(x), { [optional initializers for Derived constructor] }
-};
-```
-
-**Example**
-```cpp
-class Base {
-private:
-    int value;
-public:
-    Base(): value{0} {std::cout << "Base no-args constructor" << std::endl; }
-    Base(int x): value {x} { std::cout << "Base (int) overloaded constructor" << std::endl;}
-    ~Base() { std::cout << "Base destructor" << std::endl; }
-};
-
-class Derived: public Base {
-private:
-    int double_value;
-public:
-    Derived()
-        : Base{}, double_value{0} { std::cout << "Derived constructor " << std::endl; }
-    Derived(int x)
-        :Base{x}, double_value{x * 2} { std::cout << "Derive (int) overloaded constructor" << std::endl;}
-    ~Derived() { std::cout << "Derived destructor" << std::endl; }
-};
-
-int main() {
-    Derived d;
-    Derived d2 {40};
-    return 0;
-}
-```
-
-```bash
-Base no-args constructor // Derived no-args construction
-Derived constructor 
-Base (int) overloaded constructor   // Derived overloaded construction
-Derive (int) overloaded constructor
-Derived destructor    // Derived no-args destruction
-Base destructor
-Derived destructor    // Derived overloaded destruction
-Base destructor
-```
-
-### Copy/Move Constructors and Overloaded Operators
-
-Copy/Move constructors and overloaded operators are **not** automatically inherited from the Base class.
-
-You may **not** be able to provide your own. In such a case, the compiler-provided version should suffice.
-
-*However*, we can explicitly invoke the Base class versions from the Derived class.
-
-
-**Copy Constructor**
-The copy constructor can invoke the Base copy constructor explictly and the Derived object 'other' will be **sliced**. In other words, we will remove the Destructor constructor to get at its Base object members.
-
-```txt
-Derived::Derived (const Derived &other)
-  : Base(other), {Derived initialization list} {
-  // code.
-}
-```
-
-**Example**: Base class
-```cpp
-// Copy Assignment
-Base(const Base &other)
-  :value{other.value} {
-    std::cout << "Base copy constructor" << std::endl; 
-}
-// Assignment overloading
-Base &operator=(const Base &rhs){
-  if(this != &rhs) {
-      value = rhs.value;
-  }
-  return *this;
-}
-```
-
-**Example**: Derived Class
-```cpp
-// Copy Assignment
-Derived(const Derived &other)
-    :Base(other), double_value {other.double_value}{
-      std::cout << "Derived copy constructor" << std::endl;
-}
-// Assignment overloarding
-Derived &operator=(const Derived &rhs){
-  if(this != &rhs){
-    Base::operator=(rhs);                   // Assign Base part
-    this->double_value = rhs.double_value;  // Assign Derived part
-  }
-  return *this;
-}
-```
-
-Copy/Move constructors and overloaded operator=
-* Often you do not need to provide your own
-* If you **DO NOT** define them in Derived, then the compiler will create them and automatically call the base class' version.
-* If you **DO** provide Derived versions thne **YOU** must invoke the Base versions **explicitly** yourself.
-
->**Note**: be careful with raw pointers, especially if Base and Derived each have raw pointers, provide them with deep copy semantics.
