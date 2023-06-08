@@ -17,7 +17,7 @@ int main() {
     // std::cout << acct1 << std::endl;    // Account balance: 500
 
     std::cout << "\n======Savings account class=====================\n";
-    Savings_Account sav_acct {1000, 5.0};
+    Savings_Account sav_acct {"Savings", 1000, 5.0};
     std::cout << sav_acct << std::endl;   // Savings Account balance: 50, Interest Rate: 5
     
     sav_acct.deposit(1000);               // Savings Account balance: 2050, Interest rate: 5

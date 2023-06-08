@@ -152,10 +152,9 @@ If 0 is not returned, the operating system can check the value of the return val
 
 Namespaces are used to reduce the possibility of naming conflicts.
 
-For example, `std` is the name for the C++ 'standard' namespace. Third party namespaces will have their own names.
+For example, `std` is the name for the C++ 'standard' namespace. Third-party namespaces will have their own names.
 
 To use the methods of an entire namespace:
-
 ```cpp
 using namespace std;
 ```
@@ -178,7 +177,7 @@ using namespace std::endl;
 `cin`
 
 - standard input stream
-- Used to take input from keyboard and stores it in a variable
+- Stores input from keyboard in a variable
 
 `<<`
 
