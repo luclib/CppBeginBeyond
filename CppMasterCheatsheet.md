@@ -207,7 +207,7 @@ int main() {
 
 ```
 Enter a first integer: 100
-Enter a second integer:    200
+Enter a second integer: 200
 You entered 100, 200
 ```
 
@@ -225,7 +225,7 @@ Characters written from the keyboard are stored in an intermediate buffer. Once 
 
 If you enter a double value for an integer number, then the compiler will read the number in front of the decimal point and store that as the integer, thus losing accuracy on the value stored in the variable.
 
-Next, it will store the remainder, 0.5, as a double
+Next, it will store the remainder, 0.5, as a double and skip the second prompt entirely.
 
 ```cpp
 cout << "Enter a integer: ";
