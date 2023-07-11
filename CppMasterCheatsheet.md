@@ -55,7 +55,7 @@ Every program in C/C++ begins with the **preprocessing** phase *prior* to compil
 
 A **preprocessor** is a program that scans a C/C++ file looking for **preprocess directives** that appear at the beginning of a code file. It then pulls the source code from the corresponding namespace(s) indicated by the preprocessor directives, and loads it into the C++ file for the compiler to use.
 
-**NOTE**: the preprocessor does **not** understand C++ code. Instead it will scan the beggining of a C/C++ file looking for `#include` or `using` statements.
+**NOTE**: the preprocessor does **not** understand C++ code. Instead it will scan the beginning of a C/C++ file looking for `#include` or `using` statements.
 
 ```cpp
 #include <iostream>   // preprocessor directive
@@ -63,9 +63,7 @@ A **preprocessor** is a program that scans a C/C++ file looking for **preprocess
 using namespace std;  // preprocessor directive
 
 // Start of C++ code
-int main(){
-
-}
+int main(){ }
 ```
 
 ### Comments
@@ -114,9 +112,9 @@ Also, do **not** use comments for Version Control
 
 ### Main function
 
-Every C++ program must have *exactly* one main() function:
+Every C++ application must have *exactly* one main() function:
 
-- It is the starting point of the program execution
+- It is the starting point of the program's execution
 - A `return 0` statement indicates a succesful program execution
 
 There are 2 versions of the `main` method that are valid.
@@ -143,8 +141,8 @@ int main(int argc, char *argv[]){
 program.exe argument1 argument2
 ```
 
-- `argc` stands for _argument count_
-- `argv` stands for _argument vector_
+- `argc` stands for **_argument count_**; that is, the number of command line arguments that the program requires to run
+- `argv` stands for **_argument vector_**; these are the actual command line arguments themselves stored in character array. 
 
 If 0 is not returned, the operating system can check the value of the return value to determine what is wrong.
 
@@ -152,7 +150,7 @@ If 0 is not returned, the operating system can check the value of the return val
 
 Namespaces are used to reduce the possibility of naming conflicts.
 
-For example, `std` is the name for the C++ 'standard' namespace. Third-party namespaces will have their own names.
+For example, **`std`** is the name for the C++ 'standard' namespace. Third-party namespaces will have their own names.
 
 To use the methods of an entire namespace:
 ```cpp
@@ -168,7 +166,6 @@ using namespace std::endl;
 ```
 
 ## Basic Input and Output
-
 `cout`
 
 - standard output stream
@@ -177,16 +174,17 @@ using namespace std::endl;
 `cin`
 
 - standard input stream
-- Stores input from keyboard in a variable
+- Stores input from keyboard to program variable
 
 `<<`
 
-- insertion: takes program input and passes it to an output stream
+- **insertion**: takes program input and passes it to an output stream
 
 `>>`
 
-- extraction operator: takes data from an input stream and passes it a C/C++ program variable.
+- **extraction** operator: takes data from an input stream and passes to a program variable
 
+**Example** 
 ```cpp
 int main() {
 
@@ -211,21 +209,20 @@ Enter a second integer: 200
 You entered 100, 200
 ```
 
-Characters written from the keyboard are stored in an intermediate buffer. Once the compiler reads that piece of input, it will store it in a variable, ignoring any _whitespace characters_ inserted before or after it.
+Characters written from the keyboard are firststored in an intermediate buffer. Once the compiler reads that piece of input, it will store it in a variable, ignoring any _whitespace characters_ inserted before or after it.
 
 > **Warning**: `cin` _cannot_ read more than one piece of input at at time.
 >
-> Therefore, the following input will result in the first two inputs being stored in the separate `int` variables, thus skipping the second prompt entirely and executing the last code statement prior to `return 0`.
+> Therefore, the following input will result in the first two inputs being stored in separate `int` variables, thus skipping the second prompt entirely and executing the last code statement prior to `return 0`.
 >
 > ```
 > Enter a first integer: 100 200> Enter a second integer: You > entered 100, 200
 > ```
 
 #### Downcasting numerical data
-
 If you enter a double value for an integer number, then the compiler will read the number in front of the decimal point and store that as the integer, thus losing accuracy on the value stored in the variable.
 
-Next, it will store the remainder, 0.5, as a double and skip the second prompt entirely.
+Next, it will store the remainder, 0.5, as a double
 
 ```cpp
 cout << "Enter a integer: ";
@@ -407,40 +404,39 @@ Types of constants:
   - `enum`
 - Defined constants
   - `#define`
-
-**Literal constansts**
+#### Literal constansts
 
 - The most obvious kind of constant
 
-  ```cpp
-  x = 12;
-  y = 1.56;
-  name = "Frank";
-  middle_initial = 'J'
+```cpp
+x = 12;
+y = 1.56;
+name = "Frank";
+middle_initial = 'J'
   ```
-- Integer Literal Constants
-  12 - an integer
-  12U - an unsigned integer
-  12L - a long integer
-  12LL - a long long integer
-- Character Literal Constants
-  `\n` - newline
-  ` \r` - return
-  `\t` - tab
-  `\b` - backspace
-  `\\'` - single quote
-  `\\"` - double quote
-  `\\\\`- backslash
+#### Integer Literal Constants
 
-  ```cpp
-  cout << "Hello\tthere\nmy friend\n";
-  ```
+* 12 - an integer
+* 12U - an unsigned integer
+*  12L - a long integer
+*  12LL - a long long integer
 
-  ```
-  Hello   there
-  my friend
+#### Character Literal Constants
+* `\n` - newline
+* ` \r` - return
+* `\t` - tab
+* `\b` - backspace
+* `\'` - single quote
+* `\"` - double quote
+* `\\`- backslash
 
-  ```
+```cpp
+cout << "Hello\tthere\nmy friend\n";
+```
+```
+Hello   there
+my friend
+```
 
 Declared constants are the most popular way of declaring constants. If you try to change the error of a constant, you get a compiler error.
 
@@ -4044,15 +4040,15 @@ Derived &operator=(const Derived &rhs){
 }
 ```
 
-**Recap**: Copy/Move constructors and overloaded operator=
+**Recap**: Copy/Move constructors and overloaded `operator=`:
 * Often you do not need to provide your own
-* If you **DO NOT** define them in Derived, then the compiler will create them and automatically call the base class' version.
-* If you **DO** provide Derived versions then **YOU** must invoke the Base versions **explicitly** yourself.
+* If you **DO NOT** define them in Derived, then the compiler will create them and automatically call the base class version.
+* If you **DO** provide Derived versions then **YOU MUST** invoke the Base versions **explicitly** yourself.
 
 >**Note**: be careful with raw pointers, especially if Base and Derived each have raw pointers, provide them with deep copy semantics.
 
 ### Redefining Base Class Methods
-Derived classes can directly invoke Base class methods or they can **override** and **redefine** Bae class methods.
+Derived classes can directly invoke Base class methods or they can **override** and **redefine** Base class methods.
 
 Simply provide a method in the derived class with the same name and signature as the method in the base class.
 
@@ -4077,7 +4073,7 @@ public:
 **Static binding**: compiler determines which methods are called based on what it is given in compile time.
 * Default binding for C++
 * Derived class objects will use derived method
-* **However**, we can explicitly invoke base method from derived method as well
+* *However*, we can explicitly invoke base method from derived method as well
 * OK, but limited - much more powerful approach is dynamic binding.
 
 ### Multiple Inheritance

@@ -1,34 +1,61 @@
 #include <iostream>
-#include <Account.h>
-#include <Savings_Account.h>
+#include <vector>
+#include "Account.h"
+#include "Savings_Account.h"
+#include "Checking_Account.h"
+#include "Trust_Account.h"
+#include "Account_Util.h"
 
 int main() {
-    // std::cout << "\n======Account class=====================\n";
-    // Account acct1 {1000.0};
-    // std::cout << acct1 << std::endl;     // Account balance: 1000
+    std::cout.precision(2);
+    std::cout << std::fixed;
 
-    // acct1.deposit(500.0);
-    // std::cout << acct1 << std::endl;    // Account balance: 1500
+    // Accounts
+    std::vector<Account> accounts;
+    accounts.push_back(Account{});
+    accounts.push_back(Account{"Larry"});
+    accounts.push_back(Account{"Moe", 2000});
+    accounts.push_back(Account{"Curly", 5000});
 
-    // acct1.withdraw(1000.0);               // Account balance: 500
-    // std::cout << acct1 << std::endl;
+    display(accounts);
+    deposit(accounts, 1000);
+    withdraw(accounts, 2000);
 
-    // acct1.withdraw(5000.0);             // Insufficient funds
-    // std::cout << acct1 << std::endl;    // Account balance: 500
+    // Savings
+    std::vector<Savings_Account> sav_accounts;
+    sav_accounts.push_back(Savings_Account{});
+    sav_accounts.push_back(Savings_Account{"Herakleus"});
+    sav_accounts.push_back(Savings_Account{"Jason", 2000});
+    sav_accounts.push_back(Savings_Account{"Odysseus", 5000, 5.0});
 
-    std::cout << "\n======Savings account class=====================\n";
-    Savings_Account sav_acct {"Savings", 1000, 5.0};
-    std::cout << sav_acct << std::endl;   // Savings Account balance: 50, Interest Rate: 5
-    
-    sav_acct.deposit(1000);               // Savings Account balance: 2050, Interest rate: 5
-    std::cout << sav_acct << std::endl;
+    display(sav_accounts);
+    deposit(sav_accounts, 1000);
+    withdraw(sav_accounts, 2000);
 
-    sav_acct.withdraw(2000);               // Savings Account balance: 50, Interest Rate: 5
-    std::cout << sav_acct << std::endl;
+    // Checkings
+    std::vector<Checking_Account> check_accounts;
+    check_accounts.push_back(Checking_Account{});
+    check_accounts.push_back(Checking_Account{"Larry"});
+    check_accounts.push_back(Checking_Account{"Moe", 2000});
+    check_accounts.push_back(Checking_Account{"Curly", 5000});
 
-    sav_acct.withdraw(1000);               // Insufficient funds.
-    std::cout << sav_acct << std::endl;
+    display(check_accounts);
+    deposit(check_accounts, 1000);
+    withdraw(check_accounts, 2000);
 
+    // Trust
+    std::vector<Trust_Account> trust_accounts;
+    trust_accounts.push_back(Trust_Account{});
+    trust_accounts.push_back(Trust_Account{"Jaime"});
+    trust_accounts.push_back(Trust_Account{"Rodrigo", 2000});
+    trust_accounts.push_back(Trust_Account{"Martina", 5000, 5.0});
+
+    display(trust_accounts);
+    deposit(trust_accounts, 1000);
+    withdraw(trust_accounts, 2000);
+    withdraw(trust_accounts, 100);
+    withdraw(trust_accounts, 250);
+    withdraw(trust_accounts, 500);
 
     return 0;
 }

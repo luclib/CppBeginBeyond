@@ -23,6 +23,12 @@ bool Account::withdraw(double amount){
         return false;
 }
 
-std::ostream &operator<<(std::ostream &out, const Account &account){
-    out << "Account balance: " << account.balance;
+// const method indicates that it is read-only
+double Account::get_balance() const {
+    return this->balance;
+}
+
+std::ostream &operator<<(std::ostream &os, const Account &account){
+    os << "[Account: " << account.name << " : " << account.balance << "]";
+    return os;
 }

@@ -1,18 +1,13 @@
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
-#include <string>;
-/**
- * 
- * 
-*/
-
+#include <string>
 #include <iostream>
 
 class Account {
     friend std::ostream &operator<<(std::ostream &os, const Account &account);
 private:
     // Class exclusive constants to provide default parameter values.
-    static constexpr const char* def_name = "Unnamed ACcount";
+    static constexpr const char* def_name = "Unnamed Account";
     static constexpr double def_balance = 0.0;
 protected:
     std::string name;
@@ -24,5 +19,4 @@ public:
     bool withdraw(double amount);
     double get_balance() const;
 };
-
 #endif
