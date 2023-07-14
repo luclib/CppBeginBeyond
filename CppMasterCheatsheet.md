@@ -4090,3 +4090,89 @@ class Derived:
 >**Warning**: Multiple Inheritance is beyond the scope of this manual as it can be easily misused and it can become bery complex.
 > They are most common in class libraries and frameworks that you might be using.
 
+## Polymorphism
+### Types of Polymorphism
+1. Compile-time
+    * Operator Overloading
+    * Function Overloading
+2. Run-time
+    * Function Overriding
+
+
+#### Non-polymorphic example - Static Binding
+From the section 15 challenge.
+```cpp
+Account a;
+a.withdraw(1000)  // Account::withdraw()
+Savings b : Account;
+b.withdraw(1000)  // Savings::withdraw()
+Checking c: Account;
+c.withdraw(1000)  // Checking::withdraw()
+Trust d: Savings;
+a.withdraw(1000)  // Trust::withdraw()
+```
+
+* Every type of account class has it own withdraw method derived from the **Account** base class.
+* Each withdraw method is _different_ depending on the type of class that implements.
+```cpp
+Account *p = new Trust();
+p->withdraw(1000);  // Account::withdraw()
+                    // should be
+                    // Trust::withdraw
+```
+* p is a _pointer_ to an Account class that is pointing to a Trust account
+* Is this legal? Yes, since a Trust account is a type of Account... 
+* *However*, since it is pointing to the *base* class, Account, the method that will be invoked will be that of Account and *not* Trust.
+
+#### Polymorphic example - Dynamic Binding
+Identical to static binding *except* that the `withdraw` method from the Account class is **virtual**. The same class hierarchy is in place.
+```cpp
+Account a;
+a.withdraw(1000)  // Account::withdraw()
+Savings b : Account;
+b.withdraw(1000)  // Savings::withdraw()
+Checking c: Account;
+c.withdraw(1000)  // Checking::withdraw()
+Trust d: Savings;
+a.withdraw(1000)  // Trust::withdraw()
+
+Account *p = new Trust();
+p->withdraw(1000);  // Trust::withdraw()
+```
+* Now, the compiler will differ the binding to *run-time*.
+* When the compiler calls the `withdraw` method, it will call the Trust's `withdraw` method, instead.
+
+## Appendix
+
+### Signed vs Unsigned data types
+
+#### Character Types
+In C++, there are three *distinct* character types:
+* `char`
+* `signed char`
+* `unsigned char`
+
+In general, `char` and `unsigned char` can be used to access raw memory occupied by other objects.
+
+The **`char`** data type is used to represent character types for text; it is the character type for character literals such as `a` or `0` (though in C, numbers must  be represented by the type `int`) that make up C-strings like `"Skadoosh"`
+
+> **Note**: a `char` can also work out as number value, but it is unspecificed in the standard whether the value is signed or unsigned. For that reason, avoid character comparissons that go beyond the ASCII characters 0-127.
+
+If you plan to use character types as *numbers*, use:
+* `signed char` yields _at least_ the -127 to 127 range.
+* `unsigned char` yields _at least_ the 0 to 255 range.
+
+> "At least", because the C++ standard only gives the minimum range of values that each numeric type is required to cover. `sizeof(char)` is required to be 1 (i.e. one byte), but a byte could, in theory, be 32, for example bits.
+
+### `char` vs `int`
+Both `char`and `int` can be used to represent string literals and numbers, the diffence is in the size in byte of the variable, and from there the different values the variable can hold.
+
+A `char` can accept all values between 0 and 127, inclusively, and it occupies exactly one byte (8 bits) of memory space. 
+
+An `int` is required to be at least a 16 bits signed word, and to accept all values between -32767 and 32767, meaning that it can accpet all values from a char, whether the latter is signed or unsigned.
+
+To store purely characters in an `int` would be a waste of memory.
+
+
+
+
