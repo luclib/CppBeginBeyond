@@ -49,6 +49,14 @@
     c. [Overloading Binary Operators as Member Methods](#overloading-binary-operators-as-member-methods--------etc)
     d. [Overloading operators using on-member or global functions](#overloading-operators-using-non-member-or-global-functions)
 
+[Appendix](#appendix)
+  1. [C++ Libraries](#c-libraries)
+    a. [Signed vs Unsigned data types](#signed-vs-unsigned-data-types)
+    b. [char vs int](#char-vs-int)
+  2. [C Libraries](#c-libraries-1)
+    a. [Time Library](#time-library)
+
+
 ## Program structure
 
 Every program in C/C++ begins with the **preprocessing** phase *prior* to compilation by the C/C++ compiler.
