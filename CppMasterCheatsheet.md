@@ -2110,10 +2110,9 @@ cout << *score_ptr << endl; // 200;
 
 **Memory allocation** refers to the allocating storage from the heap at runtime.
 
-![1680631172174](image/Notes/1680631172174.png)
-
 Pointers are placed on the *stack* while the variables that they reference are allocated and placed on the *heap*.
 
+Why do need dynamic storage?
 * We often don't know how much storage we need until we need it
 * Storage can be allocated for a variable at run time.
 
@@ -4142,8 +4141,9 @@ p->withdraw(1000);  // Trust::withdraw()
 * Now, the compiler will differ the binding to *run-time*.
 * When the compiler calls the `withdraw` method, it will call the Trust's `withdraw` method, instead.
 
-## Appendix
+# Appendix
 
+## C++ Libraries
 ### Signed vs Unsigned data types
 
 #### Character Types
@@ -4172,6 +4172,153 @@ A `char` can accept all values between 0 and 127, inclusively, and it occupies e
 An `int` is required to be at least a 16 bits signed word, and to accept all values between -32767 and 32767, meaning that it can accpet all values from a char, whether the latter is signed or unsigned.
 
 To store purely characters in an `int` would be a waste of memory.
+
+## C Libraries
+### Time Library
+The C Time Library contains definitions of functions to get and manipulate date and time information.
+
+To import the library:
+```cpp
+#include <time.h>
+```
+**`time_t`** is a special variable type that that stores a arithmetic type capable of reprensenting time as a long integer.
+
+The most elementary function of `time.h` is the ***time()*** function that returns the current time when supplied NULL as an argument. More specifically, it returns the *number of seconds* since January 1, 1970 at midnight (a.k.a. **the epoch**).
+```cpp
+time_t now = time(NULL)
+printf("%ld\n", now);  // 1689711033
+```
+
+We can invoke ***sleep()*** function to force the program to wait a certain amount of time in seconds before the next *time()* is called. To do this, we will need to import the ___`unistd`___ library:
+```cpp
+#include <unistd.h>
+
+sleep(2) // Wait 2 seconds.
+```
+
+Next, we can get the *difference* between two `time_t` objects by invoking the ***difftime()*** function and supplying the two `time_t` objects we wish to compare. 
+```cpp
+time_t now = time(NULL)
+printf("%ld\n", now);
+
+sleep(2);
+time_t two_secs = time(NULL);
+
+double diff = difftime(two_secs, now);
+printf("diff: %f\n", diff); // 2.00000
+```
+
+To format the time into a more human-readable format requires the use of the ___ctime()___ function provided by the ___ctime___ library. This function will take a time_t object and converts it to an array of characters (i.e. a **C-string**) corresponding to the time and date, in local terms.
+```cpp
+char *string_now = ctime(&now);
+printf("%s\n", string_now); // Tue Jul 18 15:35:45 2023
+```
+
+Nevertheless, if we wish to get more specific details pertaining to the time and/or data such as number of seconds or day of the month, we will need a pointer to a struct, called the `tm` structure, that points to the information stored in the time_t object. This structure can either report the Greenwich Meridian(GM) time or local time.
+
+```cpp
+time_t now = time(NULL)
+struct tm *gm_time = gmtime(&now); // For GM time
+struct tm *curr_time = localtime(&now); // For local time
+```
+
+Once the `tm` struct is instantiated, we can call its many properties to get the particular piece of data we want.
+```cpp
+// From GM time.
+printf("Greewich Meridian ---------------------------------------");
+printf("tm_sec: %d\n", gm_time->tm_sec);    // Get seconds
+printf("tm_min: %d\n", gm_time->tm_min);    // Get minutes
+printf("tm_hour: %d\n", gm_time->tm_hour);  // Get hour
+printf("tm_mday: %d\n", gm_time->tm_mday);  // Get day of the month
+printf("tm_mon: %d\n", gm_time->tm_mon);    // Get month (starting with Jan. = 0)
+printf("tm_year: %d\n", gm_time->tm_year);  // Get Years since 1900
+printf("tm_wday: %d\n", gm_time->tm_wday);  // Get day of the week (since Sunday)
+printf("tm_yday: %d\n", gm_time->tm_yday);  // Get day of the year 
+printf("tm_isdst: %d\n", gm_time->tm_isdst);  // Is daylight savings time?
+
+// You can use the same functions for your local time zone using local
+struct tm *curr_time = localtime(&now);
+
+printf("\n\nLocal Time -----------------------------------------");
+printf("tm_sec: %d\n", curr_time->tm_sec);    // Get seconds
+printf("tm_min: %d\n", curr_time->tm_min);    // Get minutes
+printf("tm_hour: %d\n", curr_time->tm_hour);  // Get hour
+printf("tm_mday: %d\n", curr_time->tm_mday);  // Get day of the month
+printf("tm_mon: %d\n", curr_time->tm_mon);    // Get month (starting with Jan. = 0)
+printf("tm_year: %d\n", curr_time->tm_year);  // Get Years since 1900
+printf("tm_wday: %d\n", curr_time->tm_wday);  // Get day of the week (since Sunday)
+printf("tm_yday: %d\n", curr_time->tm_yday);  // Get day of the year 
+printf("tm_isdst: %d\n", curr_time->tm_isdst);  // Is daylight savings time?
+```
+
+```bash
+Greewich Meridian ---------------------------------------tm_sec: 43
+tm_min: 9
+tm_hour: 13
+tm_mday: 19
+tm_mon: 6
+tm_year: 123
+tm_wday: 3
+tm_yday: 199
+tm_isdst: 0
+
+
+Local Time ---------------------------------------tm_sec: 43
+tm_min: 9
+tm_hour: 9
+tm_mday: 19
+tm_mon: 6
+tm_year: 123
+tm_wday: 3
+tm_yday: 199
+tm_isdst: 1
+```
+
+> **Note**: the month is numbered 0 through 11 as it would be in an array. Therefore January would be returned as `0` and December as `11`.
+>
+>Furthermore, the year is returned as the number of years since 1900. Therefore, if you wish to obtain the actual date you would need to add 1900 to the return value of that property.
+
+To obtain string representation of the date and time from a `tm` structure, we can call the ___asctime()___ function and supply our structure as the argument.
+```cpp
+char* other_string = asctime(curr_time);
+printf("%s\n", other_string);
+// Wed Jul 19 09:13:25 2023
+```
+
+To convert from `struct` type to `time_t` type, call the ___mktime()___ function.
+```cpp
+time_t new_time = mktime(curr_time);
+curr_time->tm_sec = curr_time->tm_sec +1;
+printf("now: %ld\n", now);
+printf("new_time: %ld\n", new_time);
+
+// now: 1689772719
+// new_time: 1689772720
+```
+
+Another useful method is ___strftime()___ provided by the **`ctime`** library; this method allows for printing date and time information from a given calendar time but with a custom format determined by the programmer.
+
+The method signature takes a pointer to a character array, the maximum number of characters to be copied to the character array, a C-string containing any combination of regular characters, and special format specifiers indicated by (%).
+
+```cpp
+char s[100] // buffer
+strftime(s,100, "%A %B %d", curr_time);
+printf("%s\n", s);
+// Wednesday July 19
+```
+
+In the example above:
+* `%A` represents full weekday name
+* `%B` represents the full month name
+* `&d` represents the day of the month (01-31) 
+
+For a full list of the specifiers available, please consult the following [documentation](https://www.tutorialspoint.com/c_standard_library/c_function_strftime.htm).
+
+Finally, **strftime()** will return the size of the resulting string as the type `size_t`. If the resulting string goes over the length of the size parameter, then the function will return `0`.
+
+
+
+
 
 
 
