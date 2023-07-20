@@ -55,6 +55,8 @@
     b. [char vs int](#char-vs-int)
   2. [C Libraries](#c-libraries-1)
     a. [Time Library](#time-library)
+  3. [Posix Libraries](#posix-libraries)
+    a. [Posix Interval Timers](#posix-interval-timers)
 
 
 ## Program structure
