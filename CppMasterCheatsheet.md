@@ -4222,7 +4222,7 @@ char *string_now = ctime(&now);
 printf("%s\n", string_now); // Tue Jul 18 15:35:45 2023
 ```
 
-Nevertheless, if we wish to get more specific details pertaining to the time and/or data such as number of seconds or day of the month, we will need a pointer to a struct, called the `tm` structure, that points to the information stored in the time_t object. This structure can either report the Greenwich Meridian(GM) time or local time.
+Nevertheless, if we wish to get more specific details pertaining to the time and/or date such as number of seconds or day of the month, we will need a pointer to a struct, called the `tm` structure, that points to the information stored in the time_t object. This structure can either report the Greenwich Meridian(GM) time or local time.
 
 ```cpp
 time_t now = time(NULL)
@@ -4297,11 +4297,8 @@ To convert from `struct` type to `time_t` type, call the ___mktime()___ function
 ```cpp
 time_t new_time = mktime(curr_time);
 curr_time->tm_sec = curr_time->tm_sec +1;
-printf("now: %ld\n", now);
-printf("new_time: %ld\n", new_time);
-
-// now: 1689772719
-// new_time: 1689772720
+printf("now: %ld\n", now);                // now: 1689772719
+printf("new_time: %ld\n", new_time);      // new_time: 1689772720
 ```
 
 Another useful method is ___strftime()___ provided by the **`ctime`** library; this method allows for printing date and time information from a given calendar time but with a custom format determined by the programmer.
@@ -4322,12 +4319,110 @@ In the example above:
 
 For a full list of the specifiers available, please consult the following [documentation](https://www.tutorialspoint.com/c_standard_library/c_function_strftime.htm).
 
-Finally, **strftime()** will return the size of the resulting string as the type `size_t`. If the resulting string goes over the length of the size parameter, then the function will return `0`.
+Finally, ***strftime()*** will return the size of the resulting string as the type `size_t`. If the resulting string goes over the length of the size parameter, then the function will return `0`.
 
 
+## Posix Libraries
+### Posix Interval Timers
+PSOIX.1b defines an API to address the limitations set in classical UNIX interval timers.
 
+POSIX timer API divides the life of a timer into the following steps:
+* ___timer_create()___ : system call that creates a new timer and defines the method by which it will notify the process when it expires.
+* ___timer_settime()___ : system call that arms (starts) or disarms (stops) a timer.
+* ___timer_delete()___ system call that deletes a timer that is no longer required.
 
+#### Creating a timer
+The _create_timer()_ function creates a new timer that measures time using the clock specified by **clockid**
+```c
+#include <signal.h>
+#include <time.h>
 
+int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid);
+```
+**Arguments**:
+`clockid`: specifies the clock that the new timer uses to measure time.  It can be specified as one of the following values:
+* CLOCK_REALTIME: A settable system-wide real-time clock.
+* CLOCK_MONOTONIC: A nonsettable monotonically increasing clock that measures
+time from some unspecified point in the past that does not change after system startup.
 
+`evp`: points to a structure of type **sigevent**, that determines how the program is to be notified when the timer expires. It is defined as follows:
+```c
+#include <signal.h>
 
+union sigval {            /* Data passed with notification */
+    int     sival_int;    /* Integer value */
+    void   *sival_ptr;    /* Pointer value */
+};
+
+struct sigevent {
+    int    sigev_notify;  /* Notification method */
+    int    sigev_signo;   /* Notification signal */
+    union sigval sigev_value; /* Value accompanying signal or
+                                data passed with notification */
+
+    void (*sigev_notify_function)(union sigval);
+                          /* Function used for thread
+                            notification (SIGEV_THREAD) */
+    void  *sigev_notify_attributes;
+                          /* Attributes for notification thread
+                            (SIGEV_THREAD) */
+    pid_t  sigev_notify_thread_id;
+                          /* ID of thread to be signaled */
+};
+```
+The `sigev_notify` field specifies how notification is to be performed. Its values can be as follows:
+* SIGEV_NONE : the equivalent of a null notification; it does not provide notification of timer expiration. This data can be retrieved via the si_value field of the signinfo_t strcuture that is passed to the handler for this signal or returned by a call to _sigwaitinfo()_ or _sigtimedwait()_.
+* SIGEV_SIGNAL: when the timer expires, generate the signal specified in the _sigev_signo_ field for the process. The _sigev_value__ field specifices data (an integer or a pointer) to accompany the signal.
+* SIGEV_THREAD: when the timer expires, call the funciton specified in the _sigev_notify_function_ field. This funciton is invoked as if it were the start function in a new thread.                                                    f
+
+#### Arming and Disarming a Timer
+Once we have created a timer, we can arm (start) or disarm (stop) it using ___timer_settime()___.
+```c
+#include <time.h>
+
+in timer_settime(timer_t timerid, int flags, const struct itimerpsec *value, struct itimerspec *old_value);
+```
+The function returns 0 on success, or -1 on error.
+**Arguments**
+`timerid`: a timer handle returned by a previous calld to `timer_create()`.
+`value`: specifies the new settings for the timmer
+`old_value`: returns the previous timer setting. If we are not interested in the previous settins, we can specific `old_value` as NULL.
+Both *value* and *old_value* arguments are pointers to *itimerspec* structures, defined as follows:
+```c
+struct itimerspec {
+  struct timespec _it_interval;   /* interval for periodic timer */
+  struct timespec it_value;       /* First expiration */
+}
+```
+Each of the fields of the _itimerspec_ structure is in turn a structure of type _timespec_, which specifies time values as a number of seconds and nanoseconds:
+```c
+struct timepsec {
+  time_t tv_sec;   // seconds
+  long tv_nsec;    // nanoseconds
+}
+```
+* `it_value` specifies when the timer first expires. 
+  * If either subfield of _it_interval_ is nonzero, then this a periodic timer that, after the initial expiry specified by the _it_value_, will expire with the frequency specified in these subfields.
+  *  If both subfields of _it_interval_ are 0, this timer expires just once.
+
+`flags`:
+* If specified to 0, then *value.it_value* is interpreted relative to the clock value at the time of the call to *timer_settime()* (i.e., like *setitimer()*). 
+* If specified to TIMER_ABSTIME, then *value.it_value* is interpreted as an absolute time (i.e., measured from the clock's zero point). If that time has already passed on the clock, the timer expires immediately.
+
+To arm a timer, we make a call to *timer_settime()* in which either or both of the subfields of _value.it_value_ are nonzero. If the timer was previously armed, _timer_settime()_ replaces the previous settings.
+
+If the timer value and interval are not multiples of the resolution of the corresponding clock (as returned by *clock_getres())*, these values are rounded up to the next multiple of the resolution.
+
+On each expiration of the timer the process is notified using the method defined in the *timer_create()* call that created this timer. If the *it_interval* structure contains nonzero values, these values are used to reload the _it_value_ structure.
+
+To disarm a timer, we make a call to *timer_settime()* specifying both fields of *value.it_value* as 0.
+
+#### Retrieving the Current value of a Timer: *timer_gettime()*
+The ***timer_gettime()*** system call returns the interval and remaining time for the POSIX timer identified by *timerid*.
+```c
+#include < time.h>
+
+int timer_gettime(timer_t timerid, struct itimerspec *curr_value);
+```
+`curr_value` will point to the *itimerspec* structure that will return the interval and time until the next expiration of the timer, `timer_t`. 
 
