@@ -77,7 +77,6 @@ int main(){ }
 ```
 
 ### Comments
-
 There are two kinds of comments in C/C++.
 
 ```cpp
@@ -4188,19 +4187,19 @@ To store purely characters in an `int` would be a waste of memory.
 The C Time Library contains definitions of functions to get and manipulate date and time information.
 
 To import the library:
-```cpp
+```c
 #include <time.h>
 ```
 **`time_t`** is a special variable type that that stores a arithmetic type capable of reprensenting time as a long integer.
 
 The most elementary function of `time.h` is the ***time()*** function that returns the current time when supplied NULL as an argument. More specifically, it returns the *number of seconds* since January 1, 1970 at midnight (a.k.a. **the epoch**).
-```cpp
+```c
 time_t now = time(NULL)
 printf("%ld\n", now);  // 1689711033
 ```
 
 We can invoke ***sleep()*** function to force the program to wait a certain amount of time in seconds before the next *time()* is called. To do this, we will need to import the ___`unistd`___ library:
-```cpp
+```c
 #include <unistd.h>
 
 sleep(2) // Wait 2 seconds.
@@ -4226,7 +4225,7 @@ printf("%s\n", string_now); // Tue Jul 18 15:35:45 2023
 
 Nevertheless, if we wish to get more specific details pertaining to the time and/or date such as number of seconds or day of the month, we will need a pointer to a struct, called the `tm` structure, that points to the information stored in the time_t object. This structure can either report the Greenwich Meridian(GM) time or local time.
 
-```cpp
+```c
 time_t now = time(NULL)
 struct tm *gm_time = gmtime(&now); // For GM time
 struct tm *curr_time = localtime(&now); // For local time
@@ -4289,7 +4288,7 @@ tm_isdst: 1
 >Furthermore, the year is returned as the number of years since 1900. Therefore, if you wish to obtain the actual date you would need to add 1900 to the return value of that property.
 
 To obtain string representation of the date and time from a `tm` structure, we can call the ___asctime()___ function and supply our structure as the argument.
-```cpp
+```c
 char* other_string = asctime(curr_time);
 printf("%s\n", other_string);
 // Wed Jul 19 09:13:25 2023
@@ -4307,7 +4306,7 @@ Another useful method is ___strftime()___ provided by the **`ctime`** library; t
 
 The method signature takes a pointer to a character array, the maximum number of characters to be copied to the character array, a C-string containing any combination of regular characters, and special format specifiers indicated by (%).
 
-```cpp
+```c
 char s[100] // buffer
 strftime(s,100, "%A %B %d", curr_time);
 printf("%s\n", s);
@@ -4323,6 +4322,175 @@ For a full list of the specifiers available, please consult the following [docum
 
 Finally, ***strftime()*** will return the size of the resulting string as the type `size_t`. If the resulting string goes over the length of the size parameter, then the function will return `0`.
 
+### C-style arrays
+
+#### Arrays vs Pointers
+In C, calling an array returns a pointer the memory address of the first element of that array. Similarly, calling a pointer to that same array will return the exact same memory address as the pointer.
+
+```c
+#include <stdio.h>
+
+int main(){
+  int array[5];
+  array[2] = 2;
+  printf(" array: %zu\n",array);
+  printf("&array: %zu\n", &array);
+
+  // array: 140730484152496
+  // &array: 140730484152496
+}
+```
+
+**Note**: using `&array` will a pointer to the *entire* array.
+
+**Array Arithmetic**
+Incrementing an array will increase the resulting memory address by the size of the variable contained within. In the case of an integer array, incrementing the array will increment the memory address by the size of an `int`: 4 bytes.
+```c
+printf("    array: %zu\n",array);
+printf(" array + 1: %zu\n",array + 1);
+
+//array: 140724096973088
+//array + 1: 140724096973092
+```
+> **Note**: the exact size of an int might vary depending on the computer setup.
+
+Incrementing an array's *memory address* by one would increase the memory address by the size of the variable or structure that it is pointing to. In our example, our array is referencing an array of 5 integers, therefore the address will increased by a value of 20 or 4 x  5 bytes.
+```c
+printf("     &array: %zu\n",&array);
+printf(" &array + 1: %zu\n",&array + 1);
+
+// &array: 140730655753904
+// &array + 1: 140730655753924
+```
+
+#### Methods & Arrays
+In C, array names always *decay* to pointers. Therefore, when we declare an array and then call that array by its name, the compiler will return a pointer to its memory location.
+
+Regardless, we can still use this pointer the access the elements in the original array via index notation.
+```c
+    int array[] = {1,2,3,4,5};
+    int* result = array;
+    printf("result[3]: %d\n", result[3]);
+    // result[3]: 4
+```
+
+Once again, to print memory addresses we can either call the array byt its name or call its pointer.
+```c
+// To print memory addresses
+printf("array: %p\n", array);
+printf("result: %p\n", result);
+// array:  0x7ffce2533440
+// result: 0x7ffce2533440 
+```
+Consequently, ***C does not allow us to write methods that return an array.***
+```c
+int[] set_array(int value); // ERROR!
+```
+Instead, we need to write a function that returns a *pointer* to that array.
+
+Nonetheless, we cannot simply write a method that returns a local array; that is, a method that returns the decayed pointer to an array, because any variable declared within a function will have a lifetime that is limited to the function's call.
+
+The following method sets all of the values in an array to given integer value.
+```c
+int* set_array(int value){
+    int array_local[5]; 
+    for(int i = 0; i < 5; i++){
+        array_local[i] = value;
+    }
+    return array_local;
+}
+```
+
+However, because the method returns a pointer to a variable that no longer exists, when we call that method we will receive a compiler error.
+```c
+int main() {
+  int array[5] = {1,2,3,4,5};
+
+  result = set_array(4); // ERROR!
+  return 0;
+}
+```
+
+**Solution**: Write a function that *directly* manipulates an array declared in the main function by adding a pointer as a second argument.
+```c
+void set_array(int value, int* array){
+  for(int i = 0; i < 5; i++){
+      array[i] = value;
+  }
+}
+
+int main() {
+  int array[5] = {1,2,3,4,5};
+
+  set_array(4, array);
+
+  for(int i = 0; i < 5; i++){
+    printf("array[%d] = %d\n", i, array[i]);
+  }
+  return 0;
+}
+```
+```txt
+array[0] = 4
+array[1] = 4
+array[2] = 4
+array[3] = 4
+array[4] = 4
+```
+
+**Note**: we can return a pointer to an array created within a function **if** we *dynamically allocate memory* for that array in our main method using the `malloc` function.
+
+To do so, we need to include the namespace: `stdlib`.
+```c
+#include <stdio.h>
+#include <stdlib.h>
+```
+
+When we dynamically allocate memory, we will be storing variables in the **heap** which, contrary to the **stack**, will not delete its content *until the programmers* commands it to do using the `free()` function.
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* set_array(int value){
+  int* array = malloc(sizeof(int) * 5); // allocate space for 5 integers.
+
+  for (int i =0; i < 5; i++)
+    array[i] = value;
+  
+  return array; // will continue to be available in main function until memory is freed.
+}
+
+int main() {
+  int array[5] = {1,2,3,4,5};
+  int* result = set_array(4, array);
+
+  for(int i = 0; i < 5; i++){
+    printf("array[%d] = %d\n", i, array[i]);
+  }
+
+  free(result); // Important!
+  return 0;
+}
+```
+**Warning**: if you do not free up the memory allocated by `malloc` you risk crashing your program due to memory leaks.
+
+Finally, there are also static variables that could be used. **Static Variables** are variables whose lifetime spans the the entirety of the programmed execution.
+
+Static variables declared inside a function will last until the end of the main program execution.
+```c
+int* set_array(int value){
+  static int array[5];
+
+  for (int i =0; i < 5; i++)
+    array[i] = value;
+  
+  return array;
+}
+```
+In addition, we would no longer need to worry about dynamically freeing up data. 
+
+> **Warning**: it is generally not recommended to use static variables for this purpose, because it could prove confusing to newcomers and you would need to be sure that you want an array to exist for the lifetime of the program, otherwise you would be using up excessive memory slots.
+
 
 ## Posix Libraries
 ### Posix Interval Timers
@@ -4334,7 +4502,7 @@ POSIX timer API divides the life of a timer into the following steps:
 * ___timer_delete()___ system call that deletes a timer that is no longer required.
 
 #### Creating a timer
-The _create_timer()_ function creates a new timer that measures time using the clock specified by **clockid**
+The _create_timer()_ function creates a new timer that measures time using the clock specified by ***clockid***
 ```c
 #include <signal.h>
 #include <time.h>
@@ -4342,6 +4510,7 @@ The _create_timer()_ function creates a new timer that measures time using the c
 int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid);
 ```
 **Arguments**:
+
 `clockid`: specifies the clock that the new timer uses to measure time.  It can be specified as one of the following values:
 * CLOCK_REALTIME: A settable system-wide real-time clock.
 * CLOCK_MONOTONIC: A nonsettable monotonically increasing clock that measures
@@ -4385,9 +4554,10 @@ Once we have created a timer, we can arm (start) or disarm (stop) it using ___ti
 in timer_settime(timer_t timerid, int flags, const struct itimerpsec *value, struct itimerspec *old_value);
 ```
 The function returns 0 on success, or -1 on error.
+
 **Arguments**
-`timerid`: a timer handle returned by a previous calld to `timer_create()`.
-`value`: specifies the new settings for the timmer
+`timerid`: a timer handle returned by a previous called to `timer_create()`.
+`value`: specifies the new settings for the timer
 `old_value`: returns the previous timer setting. If we are not interested in the previous settins, we can specific `old_value` as NULL.
 Both *value* and *old_value* arguments are pointers to *itimerspec* structures, defined as follows:
 ```c
