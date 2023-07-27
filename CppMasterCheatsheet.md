@@ -50,15 +50,13 @@
     d. [Overloading operators using on-member or global functions](#overloading-operators-using-non-member-or-global-functions)
 
 [Appendix](#appendix)
-  1. [C++ Libraries](#c-libraries)
-    a. [Signed vs Unsigned data types](#signed-vs-unsigned-data-types)
-    b. [char vs int](#char-vs-int)
-  2. [C Libraries](#c-libraries-1)
-    a. [Time Library](#time-library)
-    b. [C-style Arrays](#c-style-arrays)
-  3. [Posix Libraries](#posix-libraries)
-    a. [Posix Interval Timers](#posix-interval-timers)
 
+1. [C Libraries](#c-libraries-1)
+   a. [Time Library](#time-library)
+   b. [C-style Arrays](#c-style-arrays)
+   c [`struct` vs `union`](#struct-vs-union)
+2. [Posix Libraries](#posix-libraries)
+   a. [Posix Interval Timers](#posix-interval-timers)
 
 ## Program structure
 
@@ -78,6 +76,7 @@ int main(){ }
 ```
 
 ### Comments
+
 There are two kinds of comments in C/C++.
 
 ```cpp
@@ -152,7 +151,7 @@ program.exe argument1 argument2
 ```
 
 - `argc` stands for **_argument count_**; that is, the number of command line arguments that the program requires to run
-- `argv` stands for **_argument vector_**; these are the actual command line arguments themselves stored in character array. 
+- `argv` stands for **_argument vector_**; these are the actual command line arguments themselves stored in character array.
 
 If 0 is not returned, the operating system can check the value of the return value to determine what is wrong.
 
@@ -163,6 +162,7 @@ Namespaces are used to reduce the possibility of naming conflicts.
 For example, **`std`** is the name for the C++ 'standard' namespace. Third-party namespaces will have their own names.
 
 To use the methods of an entire namespace:
+
 ```cpp
 using namespace std;
 ```
@@ -176,6 +176,7 @@ using namespace std::endl;
 ```
 
 ## Basic Input and Output
+
 `cout`
 
 - standard output stream
@@ -194,7 +195,8 @@ using namespace std::endl;
 
 - **extraction** operator: takes data from an input stream and passes to a program variable
 
-**Example** 
+**Example**
+
 ```cpp
 int main() {
 
@@ -230,6 +232,7 @@ Characters written from the keyboard are firststored in an intermediate buffer. 
 > ```
 
 #### Downcasting numerical data
+
 If you enter a double value for an integer number, then the compiler will read the number in front of the decimal point and store that as the integer, thus losing accuracy on the value stored in the variable.
 
 Next, it will store the remainder, 0.5, as a double
@@ -414,6 +417,7 @@ Types of constants:
   - `enum`
 - Defined constants
   - `#define`
+
 #### Literal constansts
 
 - The most obvious kind of constant
@@ -423,15 +427,17 @@ x = 12;
 y = 1.56;
 name = "Frank";
 middle_initial = 'J'
-  ```
+```
+
 #### Integer Literal Constants
 
 * 12 - an integer
 * 12U - an unsigned integer
-*  12L - a long integer
-*  12LL - a long long integer
+* 12L - a long integer
+* 12LL - a long long integer
 
 #### Character Literal Constants
+
 * `\n` - newline
 * ` \r` - return
 * `\t` - tab
@@ -443,12 +449,49 @@ middle_initial = 'J'
 ```cpp
 cout << "Hello\tthere\nmy friend\n";
 ```
+
 ```
 Hello   there
 my friend
 ```
 
 Declared constants are the most popular way of declaring constants. If you try to change the error of a constant, you get a compiler error.
+
+## Signed vs Unsigned Data Types
+
+### Character Types
+
+In C++, there are three *distinct* character types:
+
+*`char`
+
+*`signed char`
+
+*`unsigned char`
+
+In general, `char` and `unsigned char` can be used to access raw memory occupied by other objects.
+
+The **`char`** data type is used to represent character types for text; it is the character type for character literals such as `a` or `0` (though in C, numbers must  be represented by the type `int`) that make up C-strings like `"Skadoosh"`
+
+> **Note**: a `char` can also work out as a number value, but it is unspecificed in the standard whether the value is signed or unsigned. For that reason, avoid character comparissons that go beyond the ASCII characters 0-127.
+
+If you plan to use character types as *numbers*, use:
+
+*`signed char` yields _at least_ the -127 to 127 range.
+
+*`unsigned char` yields _at least_ the 0 to 255 range.
+
+> "At least", because the C++ standard only gives the minimum range of values that each numeric type is required to cover. `sizeof(char)` is required to be 1 (i.e. one byte), but a byte could, in theory, be 32, for example bits.
+
+#### `char` vs `int`
+
+Both `char`and `int` can be used to represent string literals and numbers, the diffence is in the size in byte of the variable, and from there the different values the variable can hold.
+
+A `char` can accept all values between 0 and 127, inclusively, and it occupies exactly one byte (8 bits) of memory space.
+
+An `int` is required to be at least a 16 bits signed word, and to accept all values between -32767 and 32767, meaning that it can accpet all values from a char, whether the latter is signed or unsigned.
+
+To store purely characters in an `int` would be a waste of memory.
 
 ## Arrays and Vectors
 
@@ -2123,6 +2166,7 @@ cout << *score_ptr << endl; // 200;
 Pointers are placed on the *stack* while the variables that they reference are allocated and placed on the *heap*.
 
 Why do need dynamic storage?
+
 * We often don't know how much storage we need until we need it
 * Storage can be allocated for a variable at run time.
 
@@ -3868,7 +3912,9 @@ int main() {
 ```
 
 ### Constructors and Destructions
+
 **Constructors and Class Initialization**
+
 * A Derived class inherits from its Base class
 * The Base class part of the Derived class MUST be initialized BEFORE the Derived class is initialized
 * When a Derived object is created
@@ -3876,6 +3922,7 @@ int main() {
   * Derived class constructor executes
 
 **Destructors and Class Initialization**
+
 * Class destructors are invoked in the reverse order as constructors
 * The derived part of the Derived class MUST be destroyed BEFORE the Base class destructor is invoked
 * When a Derived object is destroyed
@@ -3884,15 +3931,17 @@ int main() {
   * Each destructor shoul free resources allocated in its own constructors
 
 **Inheritance**
+
 * A derived class does NOT inherit:
+
   * Base class constructors
   * Base class destructor
   * Base class overloaded assignment operators
   * Base class friend functions
-
 * However, the derived class constructors, destructors, and overloaded assignment operators can invoke the base-class versions
 
 **Example**
+
 ```cpp
 class Base {
 private:
@@ -3918,7 +3967,9 @@ int main() {
     return 0;
 }
 ```
+
 **Note**: by default, calling on a derived constructor without specifying which base constructor to use will make the compiler call on the no-args constructor.
+
 ```bash
 Base no-args constructor
 Derive (int) overloaded constructor
@@ -3927,6 +3978,7 @@ Base destructor
 ```
 
 **However**,  C++11 allows for inheritance of base 'non-special' constructors by placing **`using Base::Base`** anywhere in the derived class declaration. There are a lot of rules involved, though, so it is often better to define constructors yourself.
+
 ```cpp
 class Derived: public Base {
     using Base::Base;
@@ -3958,6 +4010,7 @@ class Derived: public Base {
 ```
 
 **Example**
+
 ```cpp
 class Base {
 private:
@@ -4005,7 +4058,6 @@ You may **not** be able to provide your own. In such a case, the compiler-provid
 
 *However*, we can explicitly invoke the Base class versions from the Derived class.
 
-
 **Copy Constructor**
 The copy constructor can invoke the Base copy constructor explictly and the Derived object 'other' will be **sliced**. In other words, we will remove the Destructor constructor to get at its Base object members.
 
@@ -4017,6 +4069,7 @@ Derived::Derived (const Derived &other)
 ```
 
 **Example**: Base class
+
 ```cpp
 // Copy Assignment
 Base(const Base &other)
@@ -4033,6 +4086,7 @@ Base &operator=(const Base &rhs){
 ```
 
 **Example**: Derived Class
+
 ```cpp
 // Copy Assignment
 Derived(const Derived &other)
@@ -4050,18 +4104,21 @@ Derived &operator=(const Derived &rhs){
 ```
 
 **Recap**: Copy/Move constructors and overloaded `operator=`:
+
 * Often you do not need to provide your own
 * If you **DO NOT** define them in Derived, then the compiler will create them and automatically call the base class version.
 * If you **DO** provide Derived versions then **YOU MUST** invoke the Base versions **explicitly** yourself.
 
->**Note**: be careful with raw pointers, especially if Base and Derived each have raw pointers, provide them with deep copy semantics.
+> **Note**: be careful with raw pointers, especially if Base and Derived each have raw pointers, provide them with deep copy semantics.
 
 ### Redefining Base Class Methods
+
 Derived classes can directly invoke Base class methods or they can **override** and **redefine** Base class methods.
 
 Simply provide a method in the derived class with the same name and signature as the method in the base class.
 
 **Example**
+
 ```cpp
 class Account {
   double balance;
@@ -4080,15 +4137,18 @@ public:
 ```
 
 **Static binding**: compiler determines which methods are called based on what it is given in compile time.
+
 * Default binding for C++
 * Derived class objects will use derived method
 * *However*, we can explicitly invoke base method from derived method as well
 * OK, but limited - much more powerful approach is dynamic binding.
 
 ### Multiple Inheritance
+
 **Multiple Inheritance** occurs when a class inherits from two or more Base classes at the same time, wherein the Base classes may belong to unrelated class hierarchies.
 
 **C++ Syntax**
+
 ```cpp
 class Derived:
   public Base_Class_1, public Base_Class_2 {
@@ -4096,20 +4156,23 @@ class Derived:
   }
 ```
 
->**Warning**: Multiple Inheritance is beyond the scope of this manual as it can be easily misused and it can become bery complex.
+> **Warning**: Multiple Inheritance is beyond the scope of this manual as it can be easily misused and it can become bery complex.
 > They are most common in class libraries and frameworks that you might be using.
 
 ## Polymorphism
-### Types of Polymorphism
-1. Compile-time
-    * Operator Overloading
-    * Function Overloading
-2. Run-time
-    * Function Overriding
 
+### Types of Polymorphism
+
+1. Compile-time
+   * Operator Overloading
+   * Function Overloading
+2. Run-time
+   * Function Overriding
 
 #### Non-polymorphic example - Static Binding
+
 From the section 15 challenge.
+
 ```cpp
 Account a;
 a.withdraw(1000)  // Account::withdraw()
@@ -4123,18 +4186,22 @@ a.withdraw(1000)  // Trust::withdraw()
 
 * Every type of account class has it own withdraw method derived from the **Account** base class.
 * Each withdraw method is _different_ depending on the type of class that implements.
+
 ```cpp
 Account *p = new Trust();
 p->withdraw(1000);  // Account::withdraw()
                     // should be
                     // Trust::withdraw
 ```
+
 * p is a _pointer_ to an Account class that is pointing to a Trust account
-* Is this legal? Yes, since a Trust account is a type of Account... 
+* Is this legal? Yes, since a Trust account is a type of Account...
 * *However*, since it is pointing to the *base* class, Account, the method that will be invoked will be that of Account and *not* Trust.
 
 #### Polymorphic example - Dynamic Binding
+
 Identical to static binding *except* that the `withdraw` method from the Account class is **virtual**. The same class hierarchy is in place.
+
 ```cpp
 Account a;
 a.withdraw(1000)  // Account::withdraw()
@@ -4148,65 +4215,102 @@ a.withdraw(1000)  // Trust::withdraw()
 Account *p = new Trust();
 p->withdraw(1000);  // Trust::withdraw()
 ```
+
 * Now, the compiler will differ the binding to *run-time*.
 * When the compiler calls the `withdraw` method, it will call the Trust's `withdraw` method, instead.
 
-# Appendix
-
-## C++ Libraries
-### Signed vs Unsigned data types
-
-#### Character Types
-In C++, there are three *distinct* character types:
-* `char`
-* `signed char`
-* `unsigned char`
-
-In general, `char` and `unsigned char` can be used to access raw memory occupied by other objects.
-
-The **`char`** data type is used to represent character types for text; it is the character type for character literals such as `a` or `0` (though in C, numbers must  be represented by the type `int`) that make up C-strings like `"Skadoosh"`
-
-> **Note**: a `char` can also work out as number value, but it is unspecificed in the standard whether the value is signed or unsigned. For that reason, avoid character comparissons that go beyond the ASCII characters 0-127.
-
-If you plan to use character types as *numbers*, use:
-* `signed char` yields _at least_ the -127 to 127 range.
-* `unsigned char` yields _at least_ the 0 to 255 range.
-
-> "At least", because the C++ standard only gives the minimum range of values that each numeric type is required to cover. `sizeof(char)` is required to be 1 (i.e. one byte), but a byte could, in theory, be 32, for example bits.
-
-### `char` vs `int`
-Both `char`and `int` can be used to represent string literals and numbers, the diffence is in the size in byte of the variable, and from there the different values the variable can hold.
-
-A `char` can accept all values between 0 and 127, inclusively, and it occupies exactly one byte (8 bits) of memory space. 
-
-An `int` is required to be at least a 16 bits signed word, and to accept all values between -32767 and 32767, meaning that it can accpet all values from a char, whether the latter is signed or unsigned.
-
-To store purely characters in an `int` would be a waste of memory.
-
 ## C Libraries
+
+### `struct` vs `union`
+**Structures in C** are user-defined data types that allow you to combine items of different kinds. These can be used represent a record.
+
+**To define a structure**, use the keyword `struct` to define a new data type with at least one member.
+
+There are **two ways** to define a structure in C.
+```c
+struct [structure name]
+{
+  member definition;
+  member definition;
+  ...
+  member definition;
+};
+```
+**OR**
+```c
+struct [structure name]
+   {
+       member definition;
+       member definition;
+       ...
+       member definition;
+   } [structure variable declaration];
+```
+
+A **union in C** is a special data type that allows for stroing different data types in the same memory location. You can define a union with many members but, unlike C-structures, only *one* member can contain a value at any given time.
+
+Unions are ideal for using the same memory location for multiple purposes.
+
+**To define a union**, you must use the `union` keyword in your statement in the same manner as you would with a structure.
+
+There are two ways to define a union:
+```c
+union [union name]{
+  member definition;
+  member definition;
+  ...
+  member definition;
+};
+```
+**OR**
+```c
+union [union name]
+{
+    member definition;
+    member definition;
+    ...
+    member definition;
+}[union variable declaration];
+```
+
+#### Difference between a Structure and a Union
+| | Structure | Union
+| :--- | :--- | :---
+| **Keyword** | `struct` | `union`
+| **Size** | Greater than or equal to the sum of the sizes of its members. | Equal to the size of its largest member.
+| **Value Altering** | Does not affect other members of the structure. | Will alter other member values.
+| **Member Access** | individual member can be accessed at a time. | Only one member can be accessed at a time.
+| **Member Initialization** | Several members of a structure can be initialized at once. | Only the first member of a union can be initialized.
+
 ### Time Library
+
 The C Time Library contains definitions of functions to get and manipulate date and time information.
 
 To import the library:
+
 ```c
 #include <time.h>
 ```
+
 **`time_t`** is a special variable type that that stores a arithmetic type capable of reprensenting time as a long integer.
 
 The most elementary function of `time.h` is the ***time()*** function that returns the current time when supplied NULL as an argument. More specifically, it returns the *number of seconds* since January 1, 1970 at midnight (a.k.a. **the epoch**).
+
 ```c
 time_t now = time(NULL)
 printf("%ld\n", now);  // 1689711033
 ```
 
 We can invoke ***sleep()*** function to force the program to wait a certain amount of time in seconds before the next *time()* is called. To do this, we will need to import the ___`unistd`___ library:
+
 ```c
 #include <unistd.h>
 
 sleep(2) // Wait 2 seconds.
 ```
 
-Next, we can get the *difference* between two `time_t` objects by invoking the ***difftime()*** function and supplying the two `time_t` objects we wish to compare. 
+Next, we can get the *difference* between two `time_t` objects by invoking the ***difftime()*** function and supplying the two `time_t` objects we wish to compare.
+
 ```cpp
 time_t now = time(NULL)
 printf("%ld\n", now);
@@ -4219,6 +4323,7 @@ printf("diff: %f\n", diff); // 2.00000
 ```
 
 To format the time into a more human-readable format requires the use of the ___ctime()___ function provided by the ___ctime___ library. This function will take a time_t object and converts it to an array of characters (i.e. a **C-string**) corresponding to the time and date, in local terms.
+
 ```cpp
 char *string_now = ctime(&now);
 printf("%s\n", string_now); // Tue Jul 18 15:35:45 2023
@@ -4233,6 +4338,7 @@ struct tm *curr_time = localtime(&now); // For local time
 ```
 
 Once the `tm` struct is instantiated, we can call its many properties to get the particular piece of data we want.
+
 ```cpp
 // From GM time.
 printf("Greewich Meridian ---------------------------------------");
@@ -4286,9 +4392,10 @@ tm_isdst: 1
 
 > **Note**: the month is numbered 0 through 11 as it would be in an array. Therefore January would be returned as `0` and December as `11`.
 >
->Furthermore, the year is returned as the number of years since 1900. Therefore, if you wish to obtain the actual date you would need to add 1900 to the return value of that property.
+> Furthermore, the year is returned as the number of years since 1900. Therefore, if you wish to obtain the actual date you would need to add 1900 to the return value of that property.
 
 To obtain string representation of the date and time from a `tm` structure, we can call the ___asctime()___ function and supply our structure as the argument.
+
 ```c
 char* other_string = asctime(curr_time);
 printf("%s\n", other_string);
@@ -4296,6 +4403,7 @@ printf("%s\n", other_string);
 ```
 
 To convert from `struct` type to `time_t` type, call the ___mktime()___ function.
+
 ```cpp
 time_t new_time = mktime(curr_time);
 curr_time->tm_sec = curr_time->tm_sec +1;
@@ -4315,9 +4423,10 @@ printf("%s\n", s);
 ```
 
 In the example above:
+
 * `%A` represents full weekday name
 * `%B` represents the full month name
-* `&d` represents the day of the month (01-31) 
+* `&d` represents the day of the month (01-31)
 
 For a full list of the specifiers available, please consult the following [documentation](https://www.tutorialspoint.com/c_standard_library/c_function_strftime.htm).
 
@@ -4326,6 +4435,7 @@ Finally, ***strftime()*** will return the size of the resulting string as the ty
 ### C-style arrays
 
 #### Arrays vs Pointers
+
 In C, calling an array returns a pointer the memory address of the first element of that array. Similarly, calling a pointer to that same array will return the exact same memory address as the pointer.
 
 ```c
@@ -4346,6 +4456,7 @@ int main(){
 
 **Array Arithmetic**
 Incrementing an array will increase the resulting memory address by the size of the variable contained within. In the case of an integer array, incrementing the array will increment the memory address by the size of an `int`: 4 bytes.
+
 ```c
 printf("    array: %zu\n",array);
 printf(" array + 1: %zu\n",array + 1);
@@ -4353,9 +4464,11 @@ printf(" array + 1: %zu\n",array + 1);
 //array: 140724096973088
 //array + 1: 140724096973092
 ```
+
 > **Note**: the exact size of an int might vary depending on the computer setup.
 
 Incrementing an array's *memory address* by one would increase the memory address by the size of the variable or structure that it is pointing to. In our example, our array is referencing an array of 5 integers, therefore the address will increased by a value of 20 or 4 x  5 bytes.
+
 ```c
 printf("     &array: %zu\n",&array);
 printf(" &array + 1: %zu\n",&array + 1);
@@ -4368,6 +4481,7 @@ printf(" &array + 1: %zu\n",&array + 1);
 In C, array names always *decay* to pointers. Therefore, when we declare an array and then call that array by its name, the compiler will return a pointer to its memory location.
 
 Regardless, we can still use this pointer the access the elements in the original array via index notation.
+
 ```c
     int array[] = {1,2,3,4,5};
     int* result = array;
@@ -4376,6 +4490,7 @@ Regardless, we can still use this pointer the access the elements in the origina
 ```
 
 Once again, to print memory addresses we can either call the array byt its name or call its pointer.
+
 ```c
 // To print memory addresses
 printf("array: %p\n", array);
@@ -4383,15 +4498,19 @@ printf("result: %p\n", result);
 // array:  0x7ffce2533440
 // result: 0x7ffce2533440 
 ```
+
 Consequently, ***C does not allow us to write methods that return an array.***
+
 ```c
 int[] set_array(int value); // ERROR!
 ```
+
 Instead, we need to write a function that returns a *pointer* to that array.
 
 Nonetheless, we cannot simply write a method that returns a local array; that is, a method that returns the decayed pointer to an array, because any variable declared within a function will have a lifetime that is limited to the function's call.
 
 The following method sets all of the values in an array to given integer value.
+
 ```c
 int* set_array(int value){
     int array_local[5]; 
@@ -4403,6 +4522,7 @@ int* set_array(int value){
 ```
 
 However, because the method returns a pointer to a variable that no longer exists, when we call that method we will receive a compiler error.
+
 ```c
 int main() {
   int array[5] = {1,2,3,4,5};
@@ -4413,6 +4533,7 @@ int main() {
 ```
 
 **Solution**: Write a function that *directly* manipulates an array declared in the main function by adding a pointer as a second argument.
+
 ```c
 void set_array(int value, int* array){
   for(int i = 0; i < 5; i++){
@@ -4431,6 +4552,7 @@ int main() {
   return 0;
 }
 ```
+
 ```txt
 array[0] = 4
 array[1] = 4
@@ -4442,12 +4564,14 @@ array[4] = 4
 **Note**: we can return a pointer to an array created within a function **if** we *dynamically allocate memory* for that array in our main method using the `malloc` function.
 
 To do so, we need to include the namespace: `stdlib`.
+
 ```c
 #include <stdio.h>
 #include <stdlib.h>
 ```
 
 When we dynamically allocate memory, we will be storing variables in the **heap** which, contrary to the **stack**, will not delete its content *until the programmers* commands it to do using the `free()` function.
+
 ```c
 #include <stdio.h>
 #include <stdlib.h>
@@ -4473,11 +4597,13 @@ int main() {
   return 0;
 }
 ```
+
 **Warning**: if you do not free up the memory allocated by `malloc` you risk crashing your program due to memory leaks.
 
 Finally, there are also static variables that could be used. **Static Variables** are variables whose lifetime spans the the entirety of the programmed execution.
 
 Static variables declared inside a function will last until the end of the main program execution.
+
 ```c
 int* set_array(int value){
   static int array[5];
@@ -4488,36 +4614,44 @@ int* set_array(int value){
   return array;
 }
 ```
-In addition, we would no longer need to worry about dynamically freeing up data. 
+
+In addition, we would no longer need to worry about dynamically freeing up data.
 
 > **Warning**: it is generally not recommended to use static variables for this purpose, because it could prove confusing to newcomers and you would need to be sure that you want an array to exist for the lifetime of the program, otherwise you would be using up excessive memory slots.
 
-
 ## Posix Libraries
+
 ### Posix Interval Timers
+
 PSOIX.1b defines an API to address the limitations set in classical UNIX interval timers.
 
 POSIX timer API divides the life of a timer into the following steps:
+
 * ___timer_create()___ : system call that creates a new timer and defines the method by which it will notify the process when it expires.
 * ___timer_settime()___ : system call that arms (starts) or disarms (stops) a timer.
 * ___timer_delete()___ system call that deletes a timer that is no longer required.
 
 #### Creating a timer
+
 The _create_timer()_ function creates a new timer that measures time using the clock specified by ***clockid***
+
 ```c
 #include <signal.h>
 #include <time.h>
 
 int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid);
 ```
+
 **Arguments**:
 
 `clockid`: specifies the clock that the new timer uses to measure time.  It can be specified as one of the following values:
+
 * CLOCK_REALTIME: A settable system-wide real-time clock.
 * CLOCK_MONOTONIC: A nonsettable monotonically increasing clock that measures
-time from some unspecified point in the past that does not change after system startup.
+  time from some unspecified point in the past that does not change after system startup.
 
 `evp`: points to a structure of type **sigevent**, that determines how the program is to be notified when the timer expires. It is defined as follows:
+
 ```c
 #include <signal.h>
 
@@ -4542,18 +4676,23 @@ struct sigevent {
                           /* ID of thread to be signaled */
 };
 ```
+
 The `sigev_notify` field specifies how notification is to be performed. Its values can be as follows:
+
 * SIGEV_NONE : the equivalent of a null notification; it does not provide notification of timer expiration. This data can be retrieved via the si_value field of the signinfo_t strcuture that is passed to the handler for this signal or returned by a call to _sigwaitinfo()_ or _sigtimedwait()_.
 * SIGEV_SIGNAL: when the timer expires, generate the signal specified in the _sigev_signo_ field for the process. The _sigev_value__ field specifices data (an integer or a pointer) to accompany the signal.
 * SIGEV_THREAD: when the timer expires, call the funciton specified in the _sigev_notify_function_ field. This funciton is invoked as if it were the start function in a new thread.                                                    f
 
 #### Arming and Disarming a Timer
+
 Once we have created a timer, we can arm (start) or disarm (stop) it using ___timer_settime()___.
+
 ```c
 #include <time.h>
 
 in timer_settime(timer_t timerid, int flags, const struct itimerpsec *value, struct itimerspec *old_value);
 ```
+
 The function returns 0 on success, or -1 on error.
 
 **Arguments**
@@ -4561,25 +4700,30 @@ The function returns 0 on success, or -1 on error.
 `value`: specifies the new settings for the timer
 `old_value`: returns the previous timer setting. If we are not interested in the previous settins, we can specific `old_value` as NULL.
 Both *value* and *old_value* arguments are pointers to *itimerspec* structures, defined as follows:
+
 ```c
 struct itimerspec {
   struct timespec _it_interval;   /* interval for periodic timer */
   struct timespec it_value;       /* First expiration */
 }
 ```
+
 Each of the fields of the _itimerspec_ structure is in turn a structure of type _timespec_, which specifies time values as a number of seconds and nanoseconds:
+
 ```c
 struct timepsec {
   time_t tv_sec;   // seconds
   long tv_nsec;    // nanoseconds
 }
 ```
-* `it_value` specifies when the timer first expires. 
+
+* `it_value` specifies when the timer first expires.
   * If either subfield of _it_interval_ is nonzero, then this a periodic timer that, after the initial expiry specified by the _it_value_, will expire with the frequency specified in these subfields.
-  *  If both subfields of _it_interval_ are 0, this timer expires just once.
+  * If both subfields of _it_interval_ are 0, this timer expires just once.
 
 `flags`:
-* If specified to 0, then *value.it_value* is interpreted relative to the clock value at the time of the call to *timer_settime()* (i.e., like *setitimer()*). 
+
+* If specified to 0, then *value.it_value* is interpreted relative to the clock value at the time of the call to *timer_settime()* (i.e., like *setitimer()*).
 * If specified to TIMER_ABSTIME, then *value.it_value* is interpreted as an absolute time (i.e., measured from the clock's zero point). If that time has already passed on the clock, the timer expires immediately.
 
 To arm a timer, we make a call to *timer_settime()* in which either or both of the subfields of _value.it_value_ are nonzero. If the timer was previously armed, _timer_settime()_ replaces the previous settings.
@@ -4591,11 +4735,13 @@ On each expiration of the timer the process is notified using the method defined
 To disarm a timer, we make a call to *timer_settime()* specifying both fields of *value.it_value* as 0.
 
 #### Retrieving the Current value of a Timer: *timer_gettime()*
+
 The ***timer_gettime()*** system call returns the interval and remaining time for the POSIX timer identified by *timerid*.
+
 ```c
 #include < time.h>
 
 int timer_gettime(timer_t timerid, struct itimerspec *curr_value);
 ```
-`curr_value` will point to the *itimerspec* structure that will return the interval and time until the next expiration of the timer, `timer_t`. 
 
+`curr_value` will point to the *itimerspec* structure that will return the interval and time until the next expiration of the timer, `timer_t`.
