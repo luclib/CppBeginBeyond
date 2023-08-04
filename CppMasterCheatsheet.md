@@ -48,6 +48,15 @@
     b. [Overloading Unary Operator as Member Methods](#overloading-unary-operators-as-member-methods)
     c. [Overloading Binary Operators as Member Methods](#overloading-binary-operators-as-member-methods--------etc)
     d. [Overloading operators using on-member or global functions](#overloading-operators-using-non-member-or-global-functions)
+13. [Polymorphism](#polymorphism)
+    a. [Types of Polymorphism](#types-of-polymorphism)
+    b. [The Base Class Pointers](#the-base-class-pointer)
+    c. [Virtual Functions](#virtual-functions)
+    d. [Virtual Destructors](#virtual-destructors)
+    e. [Override Specifier](#override-specifier)
+17. [The Standard Template Library (STL)](#the-standard-template-library)
+    a. [STL Containers](#stl-containers)
+    b. [STL Iterators](#stl-iterators)
 
 [Appendix](#appendix)
 
@@ -4162,7 +4171,6 @@ class Derived:
 ## Polymorphism
 
 ### Types of Polymorphism
-
 1. Compile-time
    * Operator Overloading
    * Function Overloading
@@ -4170,9 +4178,7 @@ class Derived:
    * Function Overriding
 
 #### Non-polymorphic example - Static Binding
-
 From the section 15 challenge.
-
 ```cpp
 Account a;
 a.withdraw(1000)  // Account::withdraw()
@@ -4183,10 +4189,8 @@ c.withdraw(1000)  // Checking::withdraw()
 Trust d: Savings;
 a.withdraw(1000)  // Trust::withdraw()
 ```
-
 * Every type of account class has it own withdraw method derived from the **Account** base class.
 * Each withdraw method is _different_ depending on the type of class that implements.
-
 ```cpp
 Account *p = new Trust();
 p->withdraw(1000);  // Account::withdraw()
@@ -4199,7 +4203,6 @@ p->withdraw(1000);  // Account::withdraw()
 * *However*, since it is pointing to the *base* class, Account, the method that will be invoked will be that of Account and *not* Trust.
 
 #### Polymorphic example - Dynamic Binding
-
 Identical to static binding *except* that the `withdraw` method from the Account class is **virtual**. The same class hierarchy is in place.
 
 ```cpp
@@ -4218,6 +4221,332 @@ p->withdraw(1000);  // Trust::withdraw()
 
 * Now, the compiler will differ the binding to *run-time*.
 * When the compiler calls the `withdraw` method, it will call the Trust's `withdraw` method, instead.
+
+**Example: Static Binding using Base Pointers**
+```cpp
+#include <iostream>
+
+class Base {
+public:
+  void say_hello() const {
+    std::cout << "Hello - I am a Base class object." << std::endl;
+  }
+};
+
+class Derived: public Base {
+public:
+    void say_hello() const {
+        std::cout << "Hello - I am a Derived class object" << std::endl;
+    }
+};
+
+void greetings(const Base &obj){
+    std::cout << "Greetings: ";
+    obj.say_hello();
+}
+
+int main() {
+  Base b;
+  b.say_hello();
+
+  Derived d;
+  d.say_hello();
+  return 0;
+
+  greetings(b);
+  greetings(d);
+
+  Base* ptr = new Derived();
+
+  ptr->say_hello();
+}
+```
+
+```txt
+Hello - I am a Base class object.   // Correct
+Hello - I am a Derived class object // Correct
+
+Greetings: Hello - I am a Base class object. // Correct
+Greetings: Hello - I am a Base class object. // ERROR!
+
+Hello - I am a Base class object. // ERROR
+```
+
+Because `ptr` is pointing to a Base object, it will *always* call the base version of a function: `Base::say_hello`.
+
+Even if we use a smart pointer, the method are still statically bound.
+```cpp
+#include <memory>
+. . .
+int main(){
+  . . .
+  std::unique_ptr<Base> ptr1 = std::make_unique<Derived>();
+  ptr1->say_hello(); // Hello - I'm a Base class object
+}
+```
+For dynamic polymorphism we must have:
+1. **Inheritance**
+2. **Base class pointer** or Base class reference
+3. **virtual function**
+
+#### The Base Class Pointer
+```cpp
+Account* p1 = new Account();    
+Account* p2 = new Savings();
+Account* p3 = new Checking();
+Account *p4 = new Trust();
+
+p1->withdraw(1000);  // Account::withdraw()
+p2->withdraw(1000);  // Savings::withdraw()
+p3->withdraw(1000);  // Checking::withdraw()
+p4->withdraw(1000);  // Trust::withdraw()
+
+// I am going to create an array to store the base pointers
+Account* array [] = {p1, p2, p3, p4};
+
+// Now I can iterate over an element of the array to call each pointer individually and it will execute the correct withdraw method.
+for (auto i=0; i < 4; ++i)
+  array[i]->withdraw()
+
+// Clean up
+delete p1;
+delete p2;
+delete p3;
+delete p4;
+```
+> **Note**: this will work for other containers like vectors.
+
+#### Virtual Functions
+Redefined vs Overriden functions
+* Redefined functions are bound statically
+* Overridden functions are bound dynamically
+* Virtual functions are overriden
+
+This allows us to treat all objects generally as objects of the Base class
+
+**Declaring virtual functions**
+* Declare the function you want to override as `virtual` in the Base class
+* Virtual functions are virtual all the way down the hierarchy from this point
+* Dynamic polymorphism only via Account class pointer or reference
+
+```cpp
+class Account {
+public:
+  virtual void withdraw(double amount);
+  . . .
+}
+```
+* Override the function in the Derived classes
+* Function signature and return type must match EXACTLY
+* Virtual keyword not required but is a *best practice*
+* If you don't provide an overriden version, it will be inherited from its base class
+
+```cpp
+class Checking : public Account {
+public:
+  virtual void withdraw(double amount);
+  . . .
+}
+```
+
+#### Virtual Destructors
+Problem can occur when we destroy polymorphic objects:
+* If a derived class is destroyed by deleting its storage via the base class pointer and the class does not have a non-virtual destructor, then the behavior is undefined in the C++ standard.
+* Derived objects must always be destroyed in the correct order starting at the correct destructor.
+
+**Solution**:
+* if a class has virtual functions
+* ALWAYS provide a public virtual destructor
+* If a base class destructor is virtual then all derived class destructors are also virtual
+
+```cpp
+class Account {
+public:
+  virtual void withdraw (double amount);
+  virtual ~Account();
+  ...
+}
+```
+
+**Example**: No virtual destructors defined
+
+We define base class with a virtual destructor but do **not** define virtual destructors for the derived classes. 
+
+The result is that when we delete the storage associated with a derived class pointer, the base class' destructor is called, risking the creation of *memory leaks*, among other problems.
+```cpp
+class Account {
+public:
+  virtual void withdraw(double amount){ }
+  ~Account() { std::cout << "Account::destructor" << std::endl;}
+};
+
+class Checking: public Account {
+public:
+  virtual void withdraw(double amount){ }
+  ~Checking() { std::cout << "Checking::destructor" << std::endl;}
+};
+
+class Savings: public Account {
+public:
+  virtual void withdraw(double amount){ }
+  ~Savings() { std::cout << "Savings::destructor" << std::endl;}
+};
+
+class Trust: public Account {
+public:
+  virtual void withdraw(double amount){ }
+  ~Trust() { std::cout << "Trust::destructor" << std::endl;}
+};
+
+int main() {
+    Account* p1 = new Account();
+    Account* p2 = new Savings();
+    Account* p3 = new Checking();
+    Account* p4 = new Trust();
+
+    std::cout << "\n === Clean up ==== " << std::endl;
+
+    delete p1;
+    delete p2;
+    delete p3;
+    delete p4;
+
+    return 0;
+}
+```
+```txt
+ === Clean up ==== 
+Account::destructor
+Account::destructor
+Account::destructor
+Account::destructor
+```
+
+**Solution**: Add the `virtual` keyword in front of the derived class destructors.
+```cpp
+class Account {
+public:
+  virtual void withdraw(double amount){ }
+  virtual ~Account() { std::cout << "Account::destructor" << std::endl;}
+};
+
+class Checking: public Account {
+public:
+  virtual void withdraw(double amount){ }
+  virtual ~Checking() { std::cout << "Checking::destructor" << std::endl;}
+};
+
+class Savings: public Account {
+public:
+  virtual void withdraw(double amount){  }
+  virtual ~Savings() { std::cout << "Savings::destructor" << std::endl;}
+};
+
+class Trust: public Account {
+public:
+  virtual void withdraw(double amount){ }
+  virtual ~Trust() { std::cout << "Trust::destructor" << std::endl;}
+};
+```
+```txt
+ === Clean up ==== 
+Account::destructor
+Savings::destructor
+Account::destructor
+Checking::destructor
+Account::destructor
+Trust::destructor
+Account::destructor
+```
+
+>**Note**: Theoretically, you only need to add the `virtual` keyword in front of the base class destructor. *However*, it is good practice to add it **all derived class destructors**.
+>
+>Finally, there is no such thing as a virtual constructor.
+
+### Override Specifier
+C++11 provides an override specifier to have the compiler ensure overriding of Base class virtual functions.
+
+The function signature and return value of the virtual and overriden functions must match EXACTLY, else we will have a *redefinition*, NOT overriding.
+* Redefinition is statically bound
+* Overriding is dynanmically bound.
+
+
+
+## The Standard Template Library
+
+### STL Containers
+**Containers** are data structures that can store object of *almost* any type in the form of Template-based classes.
+
+Each container has member functions: some are specific to the container, others are available to all containers, and each container has an associated header file.
+* `#include <containter type>`
+
+**Common container functions**
+|Function | Description
+|:--- |:---
+| `Default constructor` | Initializes an empty container
+| `Overloaded constructor` | Initializes containers with many options
+| `Copy constructor` | Initializes a container as a copy of another container
+| `Move constructor` | Moves existing container to new container
+| `Destructor` |  Destroys container
+| `Copy assignment (operator=)` | Copy one container to another
+| `Move assignment (operator=)` | Move one container to another
+| `size` | Returns the number of elements in the container
+| `empty` | Returns boolean - is the container empty?
+| `insert` | Insert an element into the container
+| `operator<` and `operator <=` | Returns boolean - compare contents of 2 containers
+| `operator>` and `operator >=` | Returns boolean - compare contents of 2 containers
+| `operator!` and `operator !=` | Returns boolean - are the contents of the 2 containers equal or not
+| `swap` | Swap the elements of 2 containers
+| `erase` | Remove all elements from a container
+| `clear` | Returns iterators to first element or end
+| `begin and end` | Returns iterators to first elemeent or end
+| `rbeign and rend` | Returns reverse iterators to first element or end
+| `cbegin and cend` | Returns constant iterators to first element or end
+| `crbegin and crend` |  Returns constant reverse iterators to first element or end
+> **Note** Not all containers return the same iterators!
+
+**Container Elements**
+When storing elements in a container, only a **copy** of that element is stored in the container, this includes *all primitive types*.
+
+An element should be:
+* Copyable and assignable (copy constructor / copy assignment)
+* Moveable for efficiency (move Constructor / move assignment)
+
+Ordered associative containers must be able to compare elements
+* `operator<`, `operator==`
+
+### STL Iterators
+**Iterators** allows for abstracting an arbitrary container as a sequence of elements; they are object that *work like pointers* by design and for traversing across most container classes.
+
+Iterators must be declared based on the container type they will iterate over
+* container_type::iterator_type *iterator_name*
+
+```cpp
+std::vector<int>::iterator it1;  // it1 can only be used in a vector of integers
+std::list<std::string>::iterator it2; // it2 can iterate over a list of strings
+std::map<std::string, std::string>::iterator it3; // it3 can iterate over a map of string, string pairs
+std::set<char>::iterator it4; // it4 can iterate over a set of characters.
+```
+
+#### iterator `begin` and `end` methods
+**vectors**
+```cpp
+std::vector<int> vec {1, 2, 3};
+```
+
+|  1 | 2 |3 | `end()` |
+| :-- |:-- |:--|:--
+* `vec.begin()` points to element at index 0
+* `vec.end()` points to the location **after** the last element
+>**NOTE**: this rule applies to all STL containers.
+
+**sets**
+```cpp'
+std::set<int> suits {'C', 'H', 'S', 'D'};
+```
+
+
+# Appendix
 
 ## C Libraries
 
