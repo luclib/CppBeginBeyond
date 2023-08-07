@@ -4470,6 +4470,321 @@ The function signature and return value of the virtual and overriden functions m
 * Redefinition is statically bound
 * Overriding is dynanmically bound.
 
+```cpp
+class Base {
+public:
+    virtual void say_hello() const {
+        std::cout << "Hello - I am a Base class object" << std::endl;
+    }
+    virtual ~Base() {}
+};
+
+
+class Derived: public Base {
+public:
+    virtual void say_hello() { // Note: no const, not overriding
+        std::cout << "Hello - I am a Derived class object" << std::endl;
+    }
+    virtual ~Derived() {}
+};
+```
+Because the function declarations for `say_hello()` differ from one class to another, the compiler will interpret this as being a case of redefinition, *not* overriding.
+```txt
+Base
+  virtual void say_hello() const;
+
+Derived
+  virtual void say_hello();
+```
+The result of this will be that the pointers to both the Base class and Derived class will use the *same* function defined in the Base class when called in-code.
+```cpp
+int main(){
+    Base *p1 = new Base();
+    p1->say_hello();        // "Hello - I'm a Base class object."
+    
+    Base *p2 = new Derived();
+    p2->say_hello();       // "Hello - I'm a Derived class object."
+    return 0;
+}
+```
+```txt
+Hello - I am a Base class object
+Hello - I am a Base class object
+```
+
+This situtation can be avoided via use of the `override` keyword in the derived class function.
+```cpp
+class Base {
+public:
+    virtual void say_hello() const {
+        std::cout << "Hello - I am a Base class object" << std::endl;
+    }
+    virtual ~Base() {}
+};
+
+
+class Derived: public Base {
+public:
+    virtual void say_hello() override { // Produces compiler error
+                                        // Error: marked override but does not override
+        std::cout << "Hello - I am a Derived class object" << std::endl;
+    }
+    virtual ~Derived() {}
+};
+```
+
+When we place the `override` keyword at the end of the derived function, the compiler will underline the function and indicate that our method declaration is missing a `const` modifier at the end.
+```txt 
+member function declared with 'override' does not override a base class memberC/C++(1455)
+```
+After modification:
+```cpp
+. . .
+class Derived: public Base {
+public:
+  virtual void say_hello() const override;
+}
+. . .
+
+```
+Now, when we call the Derived class' function it will produce the appropriate output.
+```cpp
+. . .
+int main(){
+    Base *p1 = new Base();
+    p1->say_hello();        // "Hello - I'm a Base class object."
+    
+    Base *p2 = new Derived();
+    p2->say_hello();       // "Hello - I'm a Derived class object."
+
+    return 0;
+}
+```
+```txt
+Hello - I am a Base class object
+Hello - I am a Derived class object
+```
+
+#### Header and Source Code implementation
+When using header files,the *modifier keywords* need only be placed in the method prototypes *within the header files*. 
+
+This way, the actual method implementations in the source code file can be written as regular methods.
+
+Base abstract classes will contain **pure virtual functions**; these are functions that will *only* be implemented by the derived classes.
+
+#### Example: Animal and Lion class
+
+Animal.h
+```cpp
+#ifndef ANIMAL_H
+#define ANIMAL_H
+
+#include <string>
+
+// Abstract base class Animal
+
+class Animal {
+public:
+    virtual std::string get_noise() = 0; // Pure virtual function
+    virtual int get_num_legs() = 0; // Pure virtual function
+};
+#endif /* ANIMAL_H */
+```
+
+Lion.h
+```cpp
+#ifndef LION_H
+#define LION_H
+#include "Animal.h"
+
+// Derived class Lion
+class Lion: public Animal {
+ 
+public:
+    virtual std::string get_noise() override;
+    virtual int get_num_legs() override;
+};
+#endif
+```
+
+Lion.cpp
+```cpp
+#include "Lion.h"
+
+std::string Lion::get_noise(){
+    return "Roar";
+}
+int Lion::get_num_legs(){
+    return 4;
+}
+```
+
+### The Final Specifier
+C++11 introduced the final specifier, which:
+* At the class level, prevents a class from being derived from another one.
+* At the method level, prevents a virtual method from being overridden in a derived class
+* Overall, it provides better compiler optimization.
+
+#### Syntax
+Add the `final` specifier after the class name in the class' declaration.
+```cpp
+class My_Class final{
+  . . .
+};
+
+class Derived final: public Base {
+  . . .
+};
+```
+Any attempt to generate a derived class from either of the two classes above will result in a compiler error.
+
+#### Example: `final` in derived classes
+```cpp
+class A{
+public:
+  virtual void do_something();
+};
+
+class B final: public A {
+  virtual void do_something() final; // prevents further overriding
+};
+
+class C: public B{
+  virtual void do_something();       // COMPILER ERROR - Can't override
+}
+```
+Error message: 
+`a 'final' class type cannot be used as a base classC/C++(1904)`
+
+### Using Base Class References
+In addition to base class pointers, we can also use **base class references** with dynamic polymorphism. This is useful when we pass objects to functions that expect a Base class reference.
+
+Using the same class hierarchy as show previously in the chapter:
+```cpp
+Account a;
+Account &ref = a;
+ref.withdraw(1000); // Account::withdraw
+
+Trust t;
+Account &ref1 = t;
+ref1.withdraw(1000);  // Trust::withdraw
+```
+### Pure Virtual Functions and Abstract Classes
+**Abstract classes** are a *blueprint* for deriving **concrete** classes; that is, classes from which you will create more specialized objects in your program:
+* They cannot be used to instantiate objects
+* They are used as *base classes* in inheritance hierarchies.
+* Often referred to as Abstract Base Classes
+
+**Concrete classes** are classes that used to instantiate objects from
+* All their member functions are defined
+* For example:
+  * `Checking Account`, ` Savings Account`
+  * `Faculty`, `Staff`
+  * `Enemy`, `Level Boss`
+
+Abstract base classes are too generic to create objects from, but rather serve as a parent to the Derived classes that may have objects. It must contain at **least one** pure virtual function.
+* Examples: `Shape`, `Employee`, `Account`, `Player`, `Vehicle`, `Animal`, etc
+
+A **pure virtual function** is a function that is used to make a class abstract. It is specified with ``=0`` in its declaration.
+```cpp
+virtual void function() = 0; // pure virtual function
+```
+Typically, they do not provide implementations.
+
+Rules of pure virtual functions:
+* Derived classes MUST override the base class
+* If the Derived class does not override then the Derived class is also abstract
+* They are used when it does not make sense for a base class to have an implementation, but rather concrete classes must implement it.
+```cpp
+virtual void draw() = 0;      // Shape
+virtual void defend() = 0;    // Player
+virtual void move() = 0;      // Vehicle
+```
+
+**Example**
+```cpp
+class Circle: public Shape {
+private:
+  // attributes for a circle
+public:
+  virtual void draw() override {
+    // code to draw a circle
+  }
+  virtual void rotate() override {
+    // code to rotate a circle
+  }
+  virtual ~Circle();
+}
+```
+Base classes cannot be instantiated.
+```cpp
+Shape shape;              // Error
+Shape *ptr = new Shape(); // Error
+```
+Attempting to do so will result in the following error: 
+* `object of abstract class type "Shape" is not allowed:C/C++(322)`
+
+However, we can use pointers and references to dynamically refer to concrete classes derived from them.
+```cpp
+Shape* ptr = new Circle();
+ptr->draw();
+ptr->rotate(); 
+```
+
+**Example: Abstract and Concrete classes**
+```cpp
+class Shape {
+private:
+    // Attributes common to all shapes
+public:
+    virtual void draw() = 0;        // pure virtual function
+    virtual void rotate() = 0;      // pure virtual function
+    virtual ~Shape() {};
+};
+
+class Open_Shape: public Shape {   // Abstract class
+    virtual ~Open_Shape() {}
+};
+
+class Closed_Shape: public Shape {  // Abstract class
+public:
+    virtual ~Closed_Shape() {}
+};
+
+class Line: public Open_Shape {     // Concrete class
+public: 
+    virtual void draw() override {
+        std::cout << "Drawing a line" << std::endl;
+    }
+    virtual void rotate() override {
+        std::cout << "Rotating a line" << std::endl;
+    }
+};
+
+class Circle: public Closed_Shape {
+public:
+    virtual void draw() override {
+        std::cout << "Drawing a circle" << std::endl;
+    }
+    virtual void rotate() override {
+        std::cout << "Rotating a circle" << std::endl;
+    }
+    virtual ~Circle() {}
+};
+
+class Square: public Closed_Shape {
+public:
+    virtual void draw() override {
+        std::cout << "Drawing a square" << std::endl;
+    }
+    virtual void rotate() override {
+        std::cout << "Rotating a square" << std::endl;
+    }
+
+    virtual ~Square() {}
+};
+```
+
 
 
 ## The Standard Template Library
